@@ -94,7 +94,7 @@ ROGUE= /usr/local/bin/rogue
 #
 # NOTE: The -G goodlvl command line option may change the level value.
 #
-GOODGAME= 20
+GOODGAME= 23
 
 # USLEEP - Set the default sleep time between actions to USLEEP microseconds
 #

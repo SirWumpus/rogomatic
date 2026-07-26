@@ -1,4 +1,4 @@
-.TH ROGOMATIC 6 "2026 Jul 22"
+.TH ROGOMATIC 6 "2026 Jul 26"
 .UC 4
 .SH NAME
 rogomatic, run_rogo, rerun_rogo, end_player, unstuck_player \- Automatically Exploring The Dungeons of Doom
@@ -257,6 +257,9 @@ rogomatic, run_rogo, rerun_rogo, end_player, unstuck_player \- Automatically Exp
 ]
 [
 .BI \-z\  loop_sec
+]
+[
+.I unstuck.log
 ]
 .in -0.5i
 .SH DESCRIPTION

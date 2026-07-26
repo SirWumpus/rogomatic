@@ -32,7 +32,7 @@
 
 # setup
 #
-export VERSION="1.1.3 2026-07-22"
+export VERSION="1.2.0 2026-07-22"
 NAME=$(basename "$0")
 export NAME
 #
@@ -53,6 +53,7 @@ export USR="$USER"
 #       while a rogomatic rerun loop is running without interference.
 #
 export RGMDIR="/var/tmp/rogo"
+export UNSTUCK_LOG="$RGMDIR/unstuck.log"
 
 
 # usage
@@ -60,7 +61,7 @@ export RGMDIR="/var/tmp/rogo"
 export USAGE="usage: $0
         [-h] [-v level] [-V] [-n] [-N]
         [-D rgmdir] [-m missing_sec] [-r recheck_sec]
-        [-R restart_sec] [-u user] [-z loop_sec]
+        [-R restart_sec] [-u user] [-z loop_sec] [unstuck.log]
 
     -h          print help message and exit
     -v level    set verbosity level (def level: $V_FLAG)
@@ -75,6 +76,8 @@ export USAGE="usage: $0
     -R restart_sec      seconds to wait while player restarts (def: $RESTART_SEC)
     -u user             only process player and rogue run by user (def: run by $USR)
     -z loop_sec         kill player when lvllog not updated for loop_sec (def: $CPULOOP_SEC)
+
+    [unstuck.log]	change unstuck_player log file (def: $UNSTUCK_LOG)
 
 Exit codes:
      0         all OK
@@ -105,6 +108,7 @@ while getopts :hv:VnND:r:R:m:u: flag; do
 	;;
 
     D) RGMDIR="$OPTARG"
+	UNSTUCK_LOG="$RGMDIR/unstuck.log"
 	;;
     r) RUNNING_RECHECK_SEC="$OPTARG"
         ;;
@@ -142,11 +146,14 @@ shift $(( OPTIND - 1 ));
 #
 # verify arg count
 #
-if [[ $# -ne 0 ]]; then
-    echo "$0: ERROR: expected 0 args, found: $#" 1>&2
+case $# in
+    0) ;;
+    1) UNSTUCK_LOG="$1" ;;
+    *) echo "$0: ERROR: expected 0 or 1 args, found: $#" 1>&2
     echo "$USAGE" 1>&2
     exit 3
-fi
+    ;;
+esac
 
 
 # print running info if verbose
@@ -167,6 +174,7 @@ if [[ $V_FLAG -ge 3 ]]; then
     echo "$0: debug[3]: USER=$USER" 1>&2
     echo "$0: debug[3]: USR=$USR" 1>&2
     echo "$0: debug[3]: RGMDIR=$RGMDIR" 1>&2
+    echo "$0: debug[3]: UNSTUCK_LOG=$UNSTUCK_LOG" 1>&2
 fi
 
 
@@ -179,6 +187,28 @@ if [[ -n $DO_NOT_PROCESS ]]; then
     exit 0
 fi
 
+# wait until the rogomatic directory exists and is a writable directory
+#
+# If rogomatic directory doesn't exist, or isn't a writable directory,
+# then it is possible that the rogomatic process associated with it hasn't
+# started yet.  In this case we will silently wait until the rogomatic directory
+# is created by rogomatic.
+#
+while :; do
+    if [[ ! -e $RGMDIR || ! -d $RGMDIR || ! -w $RGMDIR ]]; then
+	if [[ $V_FLAG -ge 1 ]]; then
+	    echo "$0: debug[1]: waiting for RGMDIR to be a writable directory: $RGMDIR" 1>&2
+	fi
+	sleep "$MISSING_RECHECK_SEC"
+	continue
+    fi
+    break
+done
+if [[ $V_FLAG -ge 1 ]]; then
+    echo "$0: writing log messages to: $UNSTUCK_LOG" 1>&2
+    echo "$0: debug[1]: at $(date -u) RGMDIR is a writable directory: $RGMDIR" >> "$UNSTUCK_LOG"
+    echo "$0: to follow, use: tail -f -F $UNSTUCK_LOG" 1>&2
+fi
 
 # monitor player processes
 #
@@ -190,6 +220,21 @@ export RGMDIR_USED=
 export ROGUE_WAS_KILLED=
 while :; do
 
+    # wait until the rogomatic directory exists and is a writable directory
+    #
+    # If rogomatic directory doesn't exist, or isn't a writable directory,
+    # then it is possible that the rogomatic process associated with it hasn't
+    # started yet.  In this case we will silently wait until the rogomatic directory
+    # is created by rogomatic.
+    #
+    if [[ ! -e $RGMDIR || ! -d $RGMDIR || ! -w $RGMDIR ]]; then
+	if [[ $V_FLAG -ge 1 ]]; then
+	    echo "$0: debug[1]: waiting for RGMDIR to be a writable directory: $RGMDIR" 1>&2
+	fi
+	sleep "$MISSING_RECHECK_SEC"
+	continue
+    fi
+
     # look for the 1st player processes that is using the rogomatic directory
     #
     # We need a special scan that pgrep(1) doesn't have, at least the portable
@@ -198,7 +243,7 @@ while :; do
     # SC2009 (info): Consider using pgrep instead of grepping ps output.
     # https://www.shellcheck.net/wiki/SC2009
     # shellcheck disable=SC2009
-    PS_OUTPUT=$(ps -U "$USR" -o pid,ppid,time,command |
+    PS_OUTPUT=$(ps -U "$USR" -o pid,ppid,time,command 2>/dev/null |
 		grep -E '[0-9] player [a-z][a-z] [1-9]' |
 		grep -E ' '"$RGMDIR"'$' |
 		LC_ALL=C sort -n |
@@ -209,13 +254,13 @@ while :; do
     if [[ -z $PS_OUTPUT ]]; then
 	PLAYER_WAS_MISSING="true"
 	if [[ $V_FLAG -ge 3 ]]; then
-	    echo "$0: debug[3]: no player process found at $(date): sleep $MISSING_RECHECK_SEC" 1>&2
+	    echo "$0: debug[3]: no player process found at $(date): sleep $MISSING_RECHECK_SEC" >> "$UNSTUCK_LOG"
 	fi
 	sleep "$MISSING_RECHECK_SEC"
 	continue
     elif [[ -n $PLAYER_WAS_MISSING || -n $ROGUE_WAS_KILLED ]]; then
 	if [[ $V_FLAG -ge 1 ]]; then
-	    echo "$0: debug[1]: player now running at $(date): $PS_OUTPUT" 1>&2
+	    echo "$0: debug[1]: player now running at $(date): $PS_OUTPUT" >> "$UNSTUCK_LOG"
 	fi
 	PLAYER_WAS_MISSING=""
 	ROGUE_WAS_KILLED=""
@@ -251,53 +296,53 @@ while :; do
 	# report no change if verbose enough
 	#
 	if [[ $V_FLAG -ge 5 ]]; then
-	    echo "$0: debug[5]: player running at $(date): $PS_OUTPUT" 1>&2
+	    echo "$0: debug[5]: player running at $(date): $PS_OUTPUT" >> "$UNSTUCK_LOG"
 	fi
 
 	# detect if the rogue process is stuck in a CPU-bound loop
 	#
 	if [[ -z $RGMDIR_USED ]]; then
-	    echo "$0: warning: RGMDIR_USED is empty" 1>&2
+	    echo "$0: warning: RGMDIR_USED is empty" >> "$UNSTUCK_LOG"
 	    continue
 	fi
 	if [[ ! -d $RGMDIR_USED ]]; then
-	    echo "$0: warning: RGMDIR_USED: not a directory: $RGMDIR_USED" 1>&2
+	    echo "$0: warning: RGMDIR_USED: not a directory: $RGMDIR_USED" >> "$UNSTUCK_LOG"
 	    continue
 	fi
 	TOTAL_LVLLOG="$RGMDIR_USED/total.lvllog"
 	export TOTAL_LVLLOG
 	if [[ ! -f $TOTAL_LVLLOG ]]; then
-	    echo "$0: warning: TOTAL_LVLLOG: not a file: $TOTAL_LVLLOG" 1>&2
+	    echo "$0: warning: TOTAL_LVLLOG: not a file: $TOTAL_LVLLOG" >> "$UNSTUCK_LOG"
 	    continue
 	fi
 	MODTIME=$(stat -c '%Y' "$TOTAL_LVLLOG" 2>/dev/null)
 	export MODTIME
 	if [[ -z $MODTIME ]]; then
-	    echo "$0: warning: MODTIME: is empty" 1>&2
+	    echo "$0: warning: MODTIME: is empty" >> "$UNSTUCK_LOG"
 	    continue
 	fi
 	if [[ ! $MODTIME =~ ^[0-9]+$ ]]; then
-	    echo "$0: warning: MODTIME: is not an integer: $MODTIME" 1>&2
+	    echo "$0: warning: MODTIME: is not an integer: $MODTIME" >> "$UNSTUCK_LOG"
 	    continue
 	fi
 	NOW=$(date '+%s' 2>/dev/null)
 	export NOW
 	if [[ -z $NOW ]]; then
-	    echo "$0: warning: NOW is empty" 1>&2
+	    echo "$0: warning: NOW is empty" >> "$UNSTUCK_LOG"
 	    continue
 	fi
 	if [[ ! $NOW =~ ^[0-9]+$ ]]; then
-	    echo "$0: warning: NOW: is not an integer: $NOW" 1>&2
+	    echo "$0: warning: NOW: is not an integer: $NOW" >> "$UNSTUCK_LOG"
 	    continue
 	fi
 	((MOD_SECS=NOW-MODTIME))
 	export MOD_SECS
 	if [[ -z $MOD_SECS ]]; then
-	    echo "$0: warning: MOD_SECS is empty" 1>&2
+	    echo "$0: warning: MOD_SECS is empty" >> "$UNSTUCK_LOG"
 	    continue
 	fi
 	if [[ ! $MOD_SECS =~ ^[0-9]+$ ]]; then
-	    echo "$0: warning: MOD_SECS: is not an integer: $NOW" 1>&2
+	    echo "$0: warning: MOD_SECS: is not an integer: $NOW" >> "$UNSTUCK_LOG"
 	    continue
 	fi
 
@@ -308,7 +353,7 @@ while :; do
 	    # wait a bit before checking again
 	    #
 	    if [[ $V_FLAG -ge 5 ]]; then
-		echo "$0: debug[5]: sleep $RUNNING_RECHECK_SEC" 1>&2
+		echo "$0: debug[5]: sleep $RUNNING_RECHECK_SEC" >> "$UNSTUCK_LOG"
 	    fi
 	    sleep "$RUNNING_RECHECK_SEC"
 	    continue
@@ -319,9 +364,9 @@ while :; do
     #
     if [[ $V_FLAG -ge 1 ]]; then
 	if [[ $MOD_SECS -lt $CPULOOP_SEC ]]; then
-	    echo "$0: debug[1]: player stalled at $(date): $PS_OUTPUT" 1>&2
+	    echo "$0: debug[1]: player stalled at $(date): $PS_OUTPUT" >> "$UNSTUCK_LOG"
 	else
-	    echo "$0: debug[1]: player looping at $(date): $PS_OUTPUT" 1>&2
+	    echo "$0: debug[1]: player looping at $(date): $PS_OUTPUT" >> "$UNSTUCK_LOG"
 	fi
     fi
 
@@ -334,14 +379,14 @@ while :; do
 	# NOTE: If is OK if the rogue pid exits between the check and
 	#	the when we try to SIGHUP.
 	#
-	if kill -0 "$ROGUE_PID" 2>/dev/null; then
+	if kill -0 "$ROGUE_PID" >> "$UNSTUCK_LOG" 2>/dev/null; then
 	    if [[ -z $NOOP ]]; then
 
 		# HUP rogue
 		#
 		ROGUE_WAS_KILLED="true"
-		echo "$0: notice: for rogue: kill -HUP $ROGUE_PID" 1>&2
-		kill -HUP "$ROGUE_PID" 2>/dev/null
+		echo "$0: notice: for rogue: kill -HUP $ROGUE_PID" >> "$UNSTUCK_LOG"
+		kill -HUP "$ROGUE_PID" >> "$UNSTUCK_LOG" 2>/dev/null
 		STATUS="$?"
 
 		# case: HUP of rogue failed
@@ -350,7 +395,7 @@ while :; do
 		#
 		if [[ $STATUS -eq 0 ]]; then
 		    if [[ $V_FLAG -ge 3 ]]; then
-			echo "$0: debug[3]: rogue hit with HUP signal at $(date)" 1>&2
+			echo "$0: debug[3]: rogue hit with HUP signal at $(date)" >> "$UNSTUCK_LOG"
 		    fi
 
 		    # sleep a wee bit to let the process exit
@@ -361,10 +406,10 @@ while :; do
 	    # -n has disabled use of HUP
 	    #
 	    elif [[ $V_FLAG -ge 3 ]]; then
-		echo "$0: debug[3]: use of -n disabled hitting rogue pid $ROGUE_PID with HUP signal at $(date)" 1>&2
+		echo "$0: debug[3]: use of -n disabled hitting rogue pid $ROGUE_PID with HUP signal at $(date)" >> "$UNSTUCK_LOG"
 	    fi
 	else
-	    echo "$0: notice: rogue already exited: pid: $ROGUE_PID" 1>&2
+	    echo "$0: notice: rogue already exited: pid: $ROGUE_PID" >> "$UNSTUCK_LOG"
 	fi
     fi
 
@@ -377,14 +422,14 @@ while :; do
 	# NOTE: If is OK if the player pid exits between the check and
 	#	the when we try to SIGHUP.
 	#
-	if kill -0 "$PLAYER_PID" 2>/dev/null; then
+	if kill -0 "$PLAYER_PID" >> "$UNSTUCK_LOG" 2>/dev/null; then
 	    if [[ -z $NOOP ]]; then
 
 		# HUP player
 		#
 		ROGUE_WAS_KILLED="true"
-		echo "$0: notice: for player: kill -HUP $PLAYER_PID" 1>&2
-		kill -HUP "$PLAYER_PID" 2>/dev/null
+		echo "$0: notice: for player: kill -HUP $PLAYER_PID" >> "$UNSTUCK_LOG"
+		kill -HUP "$PLAYER_PID" >> "$UNSTUCK_LOG" 2>/dev/null
 		STATUS="$?"
 
 		# report player HUP success
@@ -393,7 +438,7 @@ while :; do
 		#
 		if [[ $STATUS -eq 0 ]]; then
 		    if [[ $V_FLAG -ge 3 ]]; then
-			echo "$0: debug[3]: player hit with HUP signal at $(date)" 1>&2
+			echo "$0: debug[3]: player hit with HUP signal at $(date)" >> "$UNSTUCK_LOG"
 		    fi
 
 		    # sleep a wee bit to let the process exit
@@ -404,23 +449,23 @@ while :; do
 	    # -n has disabled use of HUP
 	    #
 	    elif [[ $V_FLAG -ge 3 ]]; then
-		echo "$0: debug[3]: use of -n disabled hitting player pid $PLAYER_PID with HUP signal at $(date)" 1>&2
+		echo "$0: debug[3]: use of -n disabled hitting player pid $PLAYER_PID with HUP signal at $(date)" >> "$UNSTUCK_LOG"
 	    fi
 	else
-	    echo "$0: notice: player already exited: pid: $PLAYER_PID" 1>&2
+	    echo "$0: notice: player already exited: pid: $PLAYER_PID" >> "$UNSTUCK_LOG"
 	fi
     fi
 
     # deal with a stubborn rogue process that failed to exit, unless -n was used
     #
     if [[ -z $NOOP ]]; then
-	if kill -0 "$ROGUE_PID" 2>/dev/null; then
+	if kill -0 "$ROGUE_PID" >> "$UNSTUCK_LOG" 2>/dev/null; then
 
 	    # KILL rogue
 	    #
 	    ROGUE_WAS_KILLED="true"
-	    echo "$0: notice: rogue still running, will: kill -KILL $ROGUE_PID" 1>&2
-	    kill -KILL "$ROGUE_PID" 2>/dev/null
+	    echo "$0: notice: rogue still running, will: kill -KILL $ROGUE_PID" >> "$UNSTUCK_LOG"
+	    kill -KILL "$ROGUE_PID" >> "$UNSTUCK_LOG" 2>/dev/null
 	    STATUS="$?"
 
 	    # report rogue KILL success
@@ -429,7 +474,7 @@ while :; do
 	    #
 	    if [[ $STATUS -eq 0 ]]; then
 		if [[ $V_FLAG -ge 3 ]]; then
-		    echo "$0: debug[3]: rogue hit with KILL signal at $(date)" 1>&2
+		    echo "$0: debug[3]: rogue hit with KILL signal at $(date)" >> "$UNSTUCK_LOG"
 		fi
 	    fi
 	fi
@@ -438,13 +483,13 @@ while :; do
     # deal with a stubborn player process that failed to exit, unless -n was used
     #
     if [[ -z $NOOP ]]; then
-	if kill -0 "$PLAYER_PID" 2>/dev/null; then
+	if kill -0 "$PLAYER_PID" 2>/dev/null >> "$UNSTUCK_LOG"; then
 
 	    # KILL player
 	    #
 	    ROGUE_WAS_KILLED="true"
-	    echo "$0: notice: player still running, will: kill -KILL $PLAYER_PID" 1>&2
-	    kill -KILL "$PLAYER_PID" 2>/dev/null
+	    echo "$0: notice: player still running, will: kill -KILL $PLAYER_PID" >> "$UNSTUCK_LOG"
+	    kill -KILL "$PLAYER_PID" >> "$UNSTUCK_LOG" 2>/dev/null
 	    STATUS="$?"
 
 	    # report player KILL success
@@ -453,7 +498,7 @@ while :; do
 	    #
 	    if [[ $STATUS -eq 0 ]]; then
 		if [[ $V_FLAG -ge 3 ]]; then
-		    echo "$0: debug[3]: player hit with KILL signal at $(date)" 1>&2
+		    echo "$0: debug[3]: player hit with KILL signal at $(date)" >> "$UNSTUCK_LOG"
 		fi
 	    fi
 
@@ -471,7 +516,7 @@ while :; do
     # wait a short period of time to let rerun_rogo restart both player and rogue
     #
     if [[ $V_FLAG -ge 3 ]]; then
-	echo "$0: debug[3]: at $(date): wait for a player restart: sleep $RESTART_SEC" 1>&2
+	echo "$0: debug[3]: at $(date): wait for a player restart: sleep $RESTART_SEC" >> "$UNSTUCK_LOG"
     fi
     sleep "$RESTART_SEC"
 
