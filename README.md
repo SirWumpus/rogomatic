@@ -31,13 +31,14 @@ It is recommended that while `./rerun_rogo` is running, in another window run:
 ./unstuck_player -v 1
 ```
 
-Also creating the local file, `.stopfile`:
+The default rogomatic directory used by `./rerun_rogo` is `/var/tmp/rogo`.
+Creating file, `.stopfile` in the that directory:
 
 ```sh
-touch .stopfile
+touch /var/tmp/rogo/.stopfile
 ```
 
-will cause `./rerun_rogo` to stop restarting rogomatic when `rogue(6)` exits.
+will cause `./rerun_rogo` to stop the rerun cycle when `rogue(6)` next exits.
 
 
 ## IMPORTANT: Use with rogue 5.4.5

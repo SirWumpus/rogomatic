@@ -820,19 +820,34 @@ command to run
 As such, the rogomatic directory will be set to:
 .sp
 .in +0.5i
-.BI /var/tmp/rogo
+.B /var/tmp/rogo
 .in -0.5i
 .sp
 If the file
 .B .stopfile
-is created while
+is created in the rogomatic directory while
 .B rerun_rogo
 is running, then the next time
-.BR rogomatic (6)
+.BR rogue (6)
 exits, the
 .B .stopfile
 file is removed, and rerun cycle will be stopped.
 This is a graceful way to end the rerun cycle.
+.sp
+Because
+.B rerun_rogo
+changes the default rogomatic directory to \fB/var/tmp/rogo\fP, the default way to
+top the rerun cycle is to use the command:
+.sp
+.in +0.5i
+.B touch /var/tmp/rogo/.stopfile
+.in -0.5i
+.sp
+Changing the rogomatic directory by supplying
+.BI \-D\  rgmdir
+implies
+.BI \-s\  rgmdir/.stopfile
+as well.
 .sp
 To deal with the possibility of
 .BR rogomatic (6)

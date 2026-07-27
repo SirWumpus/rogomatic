@@ -38,6 +38,7 @@
 # include <stdio.h>
 # include <ctype.h>
 # include <setjmp.h>
+# include <string.h>
 
 # include "modern_curses.h"
 # include "types.h"
@@ -72,8 +73,8 @@ static void markchokepts (void);
 int
 markcycles (int print)
 {
-  short mark[1920];
-  struct {short where,door,dirs;} st[1000];
+  short mark[R_C+1]; /* +1 for paranoia */
+  struct {short where,door,dirs;} st[SM_BUF+1+1]; /* +1 for fencepost, +1 for paranoia */
   int sp,newsquare; int *Scr; int whichdir; int D;
 
   if (!new_mark) return (0);
@@ -82,68 +83,76 @@ markcycles (int print)
 
   markchokepts ();
 
-  { int count=1920; short *m=mark; while(count--) *m++=0;}
+  memset (mark, 0, sizeof(mark)); /* paranoia */
+  memset (st, 0, sizeof(st)); /* paranoia */
   sp=1; st[1].where=atrow*C+atcol; st[1].dirs=1; st[1].door=0;
 
   for (D = 0; D < 8; D += 2) {
-    if ((Scr[newsquare = (st[1].where+deltrc[D^4])]) & CANGO) {
+    newsquare = st[1].where + deltrc[dirmask(D^4)];
+    if (valr_c(newsquare) && (Scr[newsquare] & CANGO)) {
       if (mark[newsquare]) {
         int stop, i;
 
-        if (mark[newsquare] < sp)
-          for (stop = st[mark[newsquare]].door,
-               i = (Scr[st[sp].where] & CHOKE) ? sp : st[sp].door;
-               i !=  stop;
-               i =st[i].door) {
-            Scr[st[i].where] |= RUNOK;
-            highlight (st[i].where, SO)
+        if (mark[newsquare] < sp) {
+          for (stop=st[mark[newsquare]].door,
+               i=(Scr[st[sp].where] & CHOKE) ? sp : st[sp].door;
+               i!=stop;
+               i=st[i].door) {
+	    if (valr_c(st[i].where)) {
+	      Scr[st[i].where] |= RUNOK;
+	      highlight (st[i].where, SO);
+	    }
           }
-      }
-      else {
-        sp++; mark[newsquare] = sp;
-        highlight (newsquare, SO)
-        st[sp].where=newsquare;
-        st[sp].dirs=1; st[1].dirs= -1;
-        st[sp].door = (Scr[st[sp-1].where]&CHOKE) ? sp-1 : st[sp-1].door;
+	}
+      } else if ((sp > 1) && (sp < SM_BUF)) {
+	sp++; mark[newsquare] = sp;
+	highlight (newsquare, SO);
+	st[sp].where = newsquare;
+	st[sp].dirs = 1; st[1].dirs= -1;
+	st[sp].door = (valr_c(st[sp-1].where) && (Scr[st[sp-1].where] & CHOKE)) ? sp-1 : st[sp-1].door;
       }
     }
 
-    while (sp > 1) {
-      if ((whichdir=(st[sp].dirs++)<<1)<8) {
+    while ((sp > 1) && (sp < SM_BUF)) {
+      whichdir = ((st[sp].dirs++) << 1);
+      if (whichdir < 8) {
         /* whichdir is 6,2, or 4. */
-        if ((Scr[newsquare= (st[sp].where+deltrc[(whichdir+D)&7])])&CANGO) {
+        newsquare = st[sp].where + deltrc[dirmask(whichdir+D)];
+        if (valr_c(newsquare) && (Scr[newsquare] & CANGO)) {
           if (mark[newsquare]) {
-            int stop,i;
+            int stop, i;
 
-            if (mark[newsquare]<sp) {
+            if (mark[newsquare] < sp) {
               for (stop=st[mark[newsquare]].door,
                    i=(Scr[st[sp].where]&CHOKE)?sp:st[sp].door;
                    i!=stop;
                    i=st[i].door) {
-                Scr[st[i].where] |= RUNOK;
-                highlight (st[i].where, SO)
+		if (valr_c(st[i].where)) {
+		  Scr[st[i].where] |= RUNOK;
+		  highlight (st[i].where, SO);
+		}
               }
             }
           }
-          else {
-            sp++; mark[newsquare]=sp;
-            highlight (newsquare, SO)
-            st[sp].where=newsquare;
-            st[sp].dirs=1; D += whichdir+4;
-            st[sp].door = (Scr[st[sp-1].where]&CHOKE) ? sp-1 : st[sp-1].door;
+	  else if ((sp < SM_BUF) && valr_c(newsquare)) {
+	    sp++; mark[newsquare] = sp;
+	    highlight (newsquare, SO);
+	    st[sp].where = newsquare;
+	    st[sp].dirs = 1; D += whichdir+4;
+	    st[sp].door = (Scr[st[sp-1].where] & CHOKE) ? sp-1 : st[sp-1].door;
           }
         }
       }
       else {
-        if (! (Scr[st[sp].where] & RUNOK)) highlight (st[sp].where, SE)
-          sp--;
+        if (! (Scr[st[sp].where] & RUNOK)) highlight (st[sp].where, SE);
+        sp--;
 
         D -= 4+((st[sp].dirs-1)<<1);
       }
     }
   }
 
-  highlight (st[1].where, SE)
+  highlight (st[1].where, SE);
 
   new_mark = false;
   return (1);

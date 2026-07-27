@@ -32,7 +32,7 @@
 
 # setup
 #
-export VERSION="1.3.6 2026-07-22"
+export VERSION="1.3.7 2026-07-26"
 NAME=$(basename "$0")
 export NAME
 #
@@ -75,7 +75,6 @@ fi
 export ROGUE_TOOL
 #
 export IDLE_SEC="20"
-export STOP_FILE=".stopfile"
 export GOODGAME=20
 export USLEEP=14000
 export CAP_H_FLAG=
@@ -91,6 +90,7 @@ export CAP_Z_FLAG=
 #       while a rogomatic rerun loop is running without interference.
 #
 export RGMDIR="/var/tmp/rogo"
+export STOP_FILE="$RGMDIR/.stopfile"
 
 
 # find_progs - find executables, and set run_rogo command line options
@@ -267,7 +267,8 @@ export USAGE="usage: $0
 
     -a secs             set the timeout timer to secs seconds (def: no timeout timer)
     -d                  use a UTC date and time sub-directory under rogomatic directory path (def: don't)
-    -D rmdir            rogomatic directory (def: $RGMDIR)
+    -D rgmdir           rogomatic directory (def: $RGMDIR)
+                              NOTE: This implies: -s rgmdir/.stopfile
     -e                  turn off rogomatic game logging (def: rogomatic game log is $RGMDIR/gamelog)
     -f rogue            path to rogue (def: $ROGUE_TOOL)
     -G goodlvl          set the good game level to goodlvl (def: $GOODGAME)
@@ -322,6 +323,7 @@ while getopts :hv:VnNi:R:s:a:dD:ef:G:HP:r:S:U:Z flag; do
     d) D_FLAG="-d"
         ;;
     D) RGMDIR="$OPTARG"
+       STOP_FILE="$RGMDIR/.stopfile"
 	;;
     e) E_FLAG="-e"
         ;;

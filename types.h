@@ -126,14 +126,20 @@ typedef enum { false=0, true=1 } bool;
 /* C is the character length of row in a 24x80 character rogue screen */
 #define C (80)
 
+/* R_C is the linear (1D) length of character rogue screen */
+#define R_C ((R)*(C))
+
 /* Z is the number of monsters "A to Z" in a rogue game */
 #define Z (26)
 
 /* rogue as a 3x3 grin of possible rooms on each level */
 #define RGRID (9)
 
-/* rogue can move in one of 8 possible direction */
+/* rogue can move in one of 8 possible direction - MUST BE A POWER OF TWO */
 #define DNUM (8)
+
+/* mask a value into a valid direction */
+#define DMASK ((DNUM)-1)
 
 
 /* Global Preprocessor constants */
@@ -390,6 +396,19 @@ typedef enum { false=0, true=1 } bool;
 # define valrc(r,c) ( ((r)>=0) && ((r)<R) && ((c)>=0) && ((c)<C) )
 
 /*
+ * valr_c (r_c) - test of r_c are a valid linear (1D) screen location - no ERROR
+ *
+ * The linear r_c, must be in 1/2 open interval: [0, R_C)
+ *
+ * For a valid r_c location:
+ *	true
+ *
+ * else:
+ *	false
+ */
+# define valr_c(r_c) ( ((r_c)>=0) && ((r_c)<R_C) )
+
+/*
  * onrc (attribute,r,c) - test if a screen map location has certain attribute bit(s) set
  *
  * For a valid r and c location:
@@ -638,6 +657,13 @@ typedef enum { false=0, true=1 } bool;
  *	false
  */
 # define valdir(dir) ( ((dir)>=0) && ((dir)<DNUM) )
+
+/*
+ * dirmask(dir) - mask a value down to a valid direction
+ *
+ * NOTE: The DNUM value MUST be a power, so that DMASK (DNUM-1) is a bitmask.
+ */
+# define dirmask(dir) ((dir)&DMASK)
 
 /*
  * atdrow (dir) - row number adjacent to the current location in a given direction
