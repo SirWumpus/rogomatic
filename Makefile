@@ -193,7 +193,12 @@ AT= @
 # NetBSD: https://cdn.netbsd.org/pub/pkgsrc/current/pkgsrc/devel/ncurses/README.html
 #
 ifeq ($(target),NetBSD)
-LIBS= -lcurses
+# Ncurses package installed or use old curses.h?
+LIBS!=if test -f /usr/pkg/include/ncurses/ncurses.h; then echo '-lncurses'; else echo '-lcurses'; fi
+	ifeq ($(LIBS),-lncurses)
+		CPPFLAGS+=-I/usr/pkg/include -I/usr/pkg/include/ncurses
+		LDFLAGS+=-L/usr/pkg/lib
+	endif
 else
 LIBS= -lncurses
 endif
@@ -544,11 +549,11 @@ modern_curses.h: ${MAKE_FILE}
 	${Q} echo '' >> $@
 	${Q} echo '' >> $@
 	${Q} echo '/* do have modern new curses ? */' >> $@
-	-${Q} if echo '#include <ncurses.h>' | ${CC} -E - ${S}; then \
+	-${Q} if echo '#include <ncurses.h>' | ${CC} -E ${CPPFLAGS} - ${S}; then \
 	    echo '#include <ncurses.h> /* yes, using new curses */' >> $@; \
 	    echo >> $@; \
 	    echo '#define MODERN_CURSES NEW_CURSES' >> $@; \
-	elif echo '#include <curses.h>' | ${CC} -E - ${S}; then \
+	elif echo '#include <curses.h>' | ${CC} -E ${CPPFLAGS} - ${S}; then \
 	    echo '#include <curses.h> /* no, you have old curses, or what NetBSD calls curses */' >> $@; \
 	    echo >> $@; \
 	    echo '#define MODERN_CURSES OLD_CURSES' >> $@; \
