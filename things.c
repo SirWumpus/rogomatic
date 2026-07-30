@@ -114,12 +114,11 @@ wield (int obj)
       }
     return (0);
     }
-  }
 
   /* send 2 escapes because I needed to patch the new rogue to not hang
    * momentarily on the first escape
    */
-  else if (version == RV53A)
+  } else if (version == RV53A)
     command (T_HANDLING, "w%cw%c%c", LETTER (obj), ESC, ctrl('p'));
   else if (version >= RV54A)
     /*
@@ -410,14 +409,23 @@ pickident (void)
 {
   int obj;
 
-  if      ((obj=unknown      (ring))   != NONE);
-  else if ((obj=unidentified (wand))   != NONE);
-  else if ((obj=unidentified (Scroll)) != NONE);
-  else if ((obj=unidentified (potion)) != NONE);
-  else if ((obj=unknown      (Scroll)) != NONE);
-  else if ((obj=unknown      (potion)) != NONE);
-  else if ((obj=unknown      (hitter)) != NONE);
-  else obj = 0;
+  if      ((obj=unknown      (ring))   != NONE) {
+    ;
+  } else if ((obj=unidentified (wand))   != NONE) {
+    ;
+  } else if ((obj=unidentified (Scroll)) != NONE) {
+    ;
+  } else if ((obj=unidentified (potion)) != NONE) {
+    ;
+  } else if ((obj=unknown      (Scroll)) != NONE) {
+    ;
+  } else if ((obj=unknown      (potion)) != NONE) {
+    ;
+  } else if ((obj=unknown      (hitter)) != NONE) {
+    ;
+  } else {
+    obj = 0;
+  }
 
   return (obj);
 }
@@ -553,12 +561,13 @@ wearing (char *name)
   int result = NONE;
 
   if (leftring != NONE && itemis (leftring, INUSE) &&
-      streq (inven[leftring].str, name))
+      streq (inven[leftring].str, name)) {
     result = leftring;
 
-  else if (rightring != NONE && itemis (rightring, INUSE) &&
-           streq (inven[rightring].str, name))
+  } else if (rightring != NONE && itemis (rightring, INUSE) &&
+           streq (inven[rightring].str, name)) {
     result = rightring;
+  }
 
   return (result);
 }

@@ -358,13 +358,17 @@ readscroll (void)
          !know("protect armor") || stlmatch(inven[obj].str, "protect armor"))) {
       int obj2 = havearmor (1, NOPRINT, ANY); /* Pick our best armor */
 
-      if (obj2 == currentarmor);
+      if (obj2 == currentarmor) {
+	;
 
       /* Take off the bad stuff */
-      else if (currentarmor != NONE && takeoff ()) return (1);
+      } else if (currentarmor != NONE && takeoff ()) {
+	return (1);
 
       /* Put on the good stuff */
-      else if (obj2 != NONE && wear (obj2)) return (1);
+      } else if (obj2 != NONE && wear (obj2)) {
+	return (1);
+      }
     }
 
     /* No armor handling, so read the scroll */
@@ -500,12 +504,13 @@ int
 findarrow (void)
 {
   /* If wrong version, not cheating or must go find food, then forget it */
-  if (version > RV36B || !cheat || hungry())
+  if (version > RV36B || !cheat || hungry()) {
     return (0);
 
-  else if (!usingarrow && foundarrowtrap && !on (ARROW) &&
-           gotowards (trapr, trapc, 0))
-    { display ("Trying for arrow..."); return (1); }
+  } else if (!usingarrow && foundarrowtrap && !on (ARROW) &&
+           gotowards (trapr, trapc, 0)) {
+    display ("Trying for arrow..."); return (1);
+  }
 
   return (0);
 }
@@ -696,11 +701,11 @@ goupstairs (int running)
     /* If we are about to win, dump any magic arrows or minus things */
     if (Level == 1 &&
         ((obj = havearrow ()) != NONE || (obj = haveminus ()) != NONE) &&
-        throw (obj, 0))
-      { return (1); }
+        throw (obj, 0)) {
+      return (1);
 
     /* No magic arrows, time to leave */
-    else if (Level == 1) {
+    } else if (Level == 1) {
       /* Send an up command and a space to clear the 'You Made It' */
       sendnow ("< ");
 
@@ -716,17 +721,17 @@ goupstairs (int running)
        */
       levellog_append ("total winner");
       return (1);
-    }
 
     /* Not at the top yet, keep on trucking */
-    else
-      { command (T_MOVING, "<"); return (1); }
-  }
+    } else {
+      command (T_MOVING, "<"); return (1);
+    }
 
   /* If we know where the stairs are, go there */
-  else if ((goalr = stairrow) > 0 && (goalc = staircol) > 0 &&
-           gotowards (goalr, goalc, running))
+  } else if ((goalr = stairrow) > 0 && (goalc = staircol) > 0 &&
+           gotowards (goalr, goalc, running)) {
     return (1);
+  }
 
   return (0);
 }

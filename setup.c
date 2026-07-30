@@ -51,7 +51,7 @@
 # define READ    0
 # define WRITE   1
 
-# define VERSION "14.2.15 2026-07-26"
+# define VERSION "14.2.16 2026-07-30"
 
 /*
  * static declarations
@@ -460,13 +460,11 @@ main (int argc, char *argv[])
   }
   else if (access ("../rogue5.4/rogue", R_OK|X_OK) == 0) {
       rfile = "../rogue5.4/rogue";
-  }
 # ifdef ROGUE
-  else if (access (ROGUE, R_OK|X_OK) == 0) {
+  } else if (access (ROGUE, R_OK|X_OK) == 0) {
       rfile = ROGUE;
-  }
 # endif
-  else {
+  } else {
     fprintf (stderr, "ERROR: %s: file: %s line: %d dungeon: %u rogue not found\n",
 		      __func__, __FILE__, __LINE__, dnum);
     exit (1);
@@ -478,22 +476,18 @@ main (int argc, char *argv[])
   if (pfilearg != NULL) {
     if (access (pfilearg, R_OK|X_OK) == 0) {
 	pfile = pfilearg;
-    }
-    else {
+    } else {
 	fprintf (stderr, "ERROR: %s: file: %s line: %d dungeon: %u player arg not executable: %s - %s\n",
 			 __func__, __FILE__, __LINE__, dnum, pfilearg, strerror (errno));
 	exit (1);
     }
-  }
-  else if (access ("./player", R_OK|X_OK) == 0) {
+  } else if (access ("./player", R_OK|X_OK) == 0) {
       pfile = "./player";
-  }
 # ifdef PLAYER
-  else if (access (PLAYER, R_OK|X_OK) == 0) {
+  } else if (access (PLAYER, R_OK|X_OK) == 0) {
       pfile = PLAYER;
-  }
 # endif
-  else {
+  } else {
     fprintf (stderr, "ERROR: %s: file: %s line: %d dungeon: %u player not found\n",
 		      __func__, __FILE__, __LINE__, dnum);
     exit (1);
@@ -627,7 +621,6 @@ main (int argc, char *argv[])
 
     }
     exit (1);
-  }
 
   /*
    * execute player as parent process
@@ -641,7 +634,7 @@ main (int argc, char *argv[])
    *	   command line arg, initializing (or re-initializing those global variables as needed),
    *	   forking a rogue(6) game with pipes, and handling the case where the rogue(6) game exits.
    */
-  else {
+  } else {
     /* Encode the open files into a two character string */
     char ft[3];
     char rp[MU_BUF + 1]; /* rogue pid, +1 for paranoia */

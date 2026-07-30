@@ -105,16 +105,17 @@ armorclass (int i)
   else                                           class = 1000;
 
   /* Know the modifier exactly */
-  if (inven[i].phit != UNKNOWN)
+  if (inven[i].phit != UNKNOWN) {
     class -= inven[i].phit;
 
   /* Can remove curse, so assume it is +2 armor */
-  else if (havenamed (Scroll, "remove curse") != NONE)
+  } else if (havenamed (Scroll, "remove curse") != NONE) {
     class -= 2;
 
   /* Can't remove curse, assume it is -2 armor */
-  else
+  } else {
     class += 2;
+  }
 
   return (class);
 }
@@ -183,14 +184,14 @@ weaponclass (int i)
   int class, hitplus = 0, damplus = 0;
 
   /* Swords and maces are always valid weapons */
-  if (inven[i].type == hitter)
+  if (inven[i].type == hitter) {
     ;
   /* Under special circumstances, arrows are valid weapons (Hee hee) */
-  else if (cheat && inven[i].type == missile &&
-           stlmatch (inven[i].str, "arrow"))
+  } else if (cheat && inven[i].type == missile &&
+           stlmatch (inven[i].str, "arrow")) {
     ;
   /* Not a valid weapon */
-  else
+  } else
     return (0);
 
   /*
@@ -214,7 +215,6 @@ weaponclass (int i)
 
     if (inven[i].pdam != UNKNOWN)
       damplus = inven[i].pdam;
-  }
 
   /*
    * Strategy for "Magic Arrows". These are single arrows when
@@ -224,11 +224,11 @@ weaponclass (int i)
    * to kill something, we assume it is a valuable arrow.
    */
 
-  else if (cheat && version <= RV36B && usingarrow && goodarrow > 20 &&
-           i == currentweapon)
+  } else if (cheat && version <= RV36B && usingarrow && goodarrow > 20 &&
+           i == currentweapon) {
     return (1800);
 
-  else if (cheat && version <= RV36B && stlmatch (inven[i].str, "arrow") &&
+  } else if (cheat && version <= RV36B && stlmatch (inven[i].str, "arrow") &&
            inven[i].count == 1 && !itemis (i, WORTHLESS) &&
            (!badarrow || i != currentweapon))
     { hitplus = 50;  damplus = 50; }
@@ -307,49 +307,47 @@ ringclass (int i)
   }
 
   /* A ring of protection */
-  if (stlmatch (inven[i].str, "protection"))
-    { if (magicplus > 0) class = (havefood (1) ? 1000 : 0) + 450; }
+  if (stlmatch (inven[i].str, "protection")) {
+    if (magicplus > 0) class = (havefood (1) ? 1000 : 0) + 450;
 
   /* A ring of add strength */
-  else if (stlmatch (inven[i].str, "add strength")) {
+  } else if (stlmatch (inven[i].str, "add strength")) {
     if (itemis (i, INUSE) && magicplus > 0) {
       if (hitbonus (Str) == hitbonus (Str - magicplus * 100) &&
           damagebonus (Str) == damagebonus (Str - magicplus * 100))
         class = 400;
       else
         class = (havefood (1) ? 1000 : 0) + 400;
-    }
-    else if (magicplus > 0) {
+    } else if (magicplus > 0) {
       if (hitbonus (Str) == hitbonus (Str + magicplus * 100) &&
           damagebonus (Str) == damagebonus (Str + magicplus * 100))
         class = 400;
       else
         class = (havefood (1) ? 1000 : 0) + 400;
     }
-  }
 
   /* A ring of sustain strength */
-  else if (stlmatch (inven[i].str, "sustain strength")) {
+  } else if (stlmatch (inven[i].str, "sustain strength")) {
     /* A second ring of sustain strength is useless */
-    if (!itemis (i, INUSE) && wearing ("sustain strength") != NONE)
+    if (!itemis (i, INUSE) && wearing ("sustain strength") != NONE) {
       class = 0;
 
-    else
+    } else {
       class = (havefood (3) ? 1000 : 0) +
                 (Level > 12 ? 150 :
                  Str > 2000 ? 700 :
                  Str > 1600 ? Str - 1200 :
                    100);
-  }
+    }
 
   /* A ring of searching */
-  else if (stlmatch (inven[i].str, "searching"))
-  { class = (havefood (0) ? 1000 : 0) + 250; }
+  } else if (stlmatch (inven[i].str, "searching")) {
+    class = (havefood (0) ? 1000 : 0) + 250;
 
   /* A ring of see invisible */
-  else if (stlmatch (inven[i].str, "see invisible")) {
+  } else if (stlmatch (inven[i].str, "see invisible")) {
     /* A second ring of see invisible is useless */
-    if (!itemis (i, INUSE) && wearing ("see invisible") != NONE)
+    if (!itemis (i, INUSE) && wearing ("see invisible") != NONE) {
       class = 0;
 
     /*
@@ -359,7 +357,7 @@ ringclass (int i)
      * by a see invisible potion wearing off.				MLM
      */
 
-    else if (itemis (i, INUSE) && beingstalked)
+    } else if (itemis (i, INUSE) && beingstalked) {
       class = 800;
 
     /*
@@ -367,108 +365,106 @@ ringclass (int i)
      * turns, just in case the beast comes back to haunt us.		MLM
      */
 
-    else
+    } else {
       class = (beingstalked || turns - putonseeinv < 20) ? 1999 :
                   ((havefood (0) && Level > 15 && Level < 26) ? 1000 : 0) + 300;
-  }
+    }
 
   /* A ring of adornment */
-  else if (stlmatch (inven[i].str, "adornment"))
-  { class = 0; }
+  } else if (stlmatch (inven[i].str, "adornment")) {
+    class = 0;
 
   /* A ring of aggravate monster */
-  else if (stlmatch (inven[i].str, "aggravate monster"))
-    { class = 0; }
+  } else if (stlmatch (inven[i].str, "aggravate monster")) {
+    class = 0;
 
   /* A ring of dexterity */
-  else if (stlmatch (inven[i].str, "dexterity"))
-    { if (magicplus > 0) class = (havefood (0) ? 1000 : 0) + 475; }
+  } else if (stlmatch (inven[i].str, "dexterity")) {
+    if (magicplus > 0) class = (havefood (0) ? 1000 : 0) + 475;
 
   /* A ring of increase damage */
-  else if (stlmatch (inven[i].str, "increase damage"))
-    { if (magicplus > 0) class = (havefood (0) ? 1000 : 0) + 500; }
+  } else if (stlmatch (inven[i].str, "increase damage")) {
+    if (magicplus > 0) class = (havefood (0) ? 1000 : 0) + 500;
 
   /* A ring of regeneration */
-  else if (stlmatch (inven[i].str, "regeneration")) {
+  } else if (stlmatch (inven[i].str, "regeneration")) {
     /* Analysis indicates that rings of regenerate DO NOT hold back   */
     /* the character after any level. They each add one hit point per */
     /* turn of rest regardless of your level!			MLM   */
 
     class = 50*(Hpmax-Hp-Explev) + 500;
-  }
 
   /* A ring of slow digestion */
-  else if (stlmatch (inven[i].str, "slow digestion")) {
+  } else if (stlmatch (inven[i].str, "slow digestion")) {
     /* A second ring of slow digestion is not too useful */
     if (havefood (0) && !itemis (i, INUSE) &&
-        wearing ("slow digestion") != NONE)
+        wearing ("slow digestion") != NONE) {
       class = 1001;
 
-    else {
+    } else {
       class =	havefood (3) ?	1100 :
                 havefood (2) ?	1300 :
                 havefood (1) ?	1500 :
                 havefood (0) ?	1900 :
                   1999 ;
     }
-  }
 
   /* A ring of teleportation */
-  else if (stlmatch (inven[i].str, "telportation") ||
-           stlmatch (inven[i].str, "teleportation"))
-  { class = 0; }
+  } else if (stlmatch (inven[i].str, "telportation") ||
+           stlmatch (inven[i].str, "teleportation")) {
+    class = 0;
 
   /* A ring of stealth */
-  else if (stlmatch (inven[i].str, "stealth")) {
+  } else if (stlmatch (inven[i].str, "stealth")) {
     /* A second ring of stealth is useless */
-    if (!itemis (i, INUSE) && wearing ("stealth") != NONE)
+    if (!itemis (i, INUSE) && wearing ("stealth") != NONE) {
       class = 0;
 
-    else {
+    } else {
       class = (havefood (1) ? 1000 : 0) +
                   (Level > 17 ? 850 : Level > 12 ? 700 : 300);
     }
-  }
 
   /* A ring of maintain armor */
-  else if (stlmatch (inven[i].str, "maintain armor")) {
+  } else if (stlmatch (inven[i].str, "maintain armor")) {
     int bestarm, nextarm, armdiff;
 
     /* No rust monsters yet or cursed armor */
-    if (Level < 9 || cursedarmor) return (900);
+    if (Level < 9 || cursedarmor) { return (900);
 
     /* Past the rust monsters */
-    else if (Level > 18) return (300);
+    } else if (Level > 18) { return (300);
 
     /* A second ring of maintain armor is useless */
-    else if (!itemis (i, INUSE) && wearing ("maintain armor") != NONE)
+    } else if (!itemis (i, INUSE) && wearing ("maintain armor") != NONE) {
       class = 0;
 
-    else {
+    } else {
       bestarm = havearmor (1, NOPRINT, ANY);
       nextarm = havearmor (1, NOPRINT, RUSTPROOF);
 
-      if (bestarm < 0)                       /* No armor to protect */
+      if (bestarm < 0) {                      /* No armor to protect */
         return (700);
 
-      else if (!willrust (bestarm))	     /* Armor wont rust anyway */
+      } else if (!willrust (bestarm)) {	     /* Armor wont rust anyway */
         return (0);
 
-      else if (nextarm < 0)	             /* Naked is AC 10 */
+      } else if (nextarm < 0) {	             /* Naked is AC 10 */
         armdiff = 10 - armorclass (bestarm);
 
-      else			             /* Get difference in classes */
+      } else {			             /* Get difference in classes */
         armdiff = armorclass (nextarm) -
                   armorclass (bestarm);
+      }
 
       class = (havefood (1) ? 1000 : 0) +
                   200 * armdiff;
     }
-  }
 
   /* Not a known ring, forget it */
-  else
+  } else {
     return (0);
+  }
 
   /* A magical plus is worth 100 */
   return (class + 100*magicplus);
@@ -603,16 +599,14 @@ hitbonus(int strength)
 {
   int bonus = 0;
 
-  if (strength < 700) bonus = strength/100 - 7;
-
-  else if (version > RV36B) {
+  if (strength < 700) {
+    bonus = strength/100 - 7;
+  } else if (version > RV36B) {
     if (strength < 1700) bonus = 0;
     else if (strength < 2100) bonus = 1;
     else if (strength < 3100) bonus = 2;
     else bonus = 3;
-  }
-
-  else {
+  } else {
     if (strength < 1700) bonus = 0;
     else if (strength < 1851) bonus = 1;
     else if (strength < 1900) bonus = 2;
@@ -631,9 +625,9 @@ damagebonus (int strength)
 {
   int bonus = 0;
 
-  if (strength < 700) bonus = strength/100 - 7;
-
-  else  if (version > RV36B) {
+  if (strength < 700) {
+    bonus = strength/100 - 7;
+  } else if (version > RV36B) {
     if (strength < 1600) bonus = 0;
     else if (strength < 1800) bonus = 1;
     else if (strength < 1900) bonus = 2;
@@ -641,9 +635,7 @@ damagebonus (int strength)
     else if (strength < 2200) bonus = 4;
     else if (strength < 1600) bonus = 5;
     else bonus = 6;
-  }
-
-  else {
+  } else {
     if (strength < 1600) bonus = 0;
     else if (strength < 1800) bonus = 1;
     else if (strength < 1801) bonus = 2;

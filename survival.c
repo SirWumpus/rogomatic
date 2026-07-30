@@ -303,17 +303,18 @@ backtodoor (int dist)
    * Now check whether we try to move back to the door
    */
 
-  if (notmoving)
+  if (notmoving) {
     dwait (D_BATTLE, __func__, "monsters not moving");
 
-  else if (on (SCAREM))
+  } else if (on (SCAREM)) {
     dwait (D_BATTLE, __func__, "Not backing up, on scare monster scroll");
 
-  else if (dist > 0 && (on (DOOR) || nextto (DOOR, atrow, atcol)))
+  } else if (dist > 0 && (on (DOOR) || nextto (DOOR, atrow, atcol))) {
     dwait (D_BATTLE, __func__, "next to door, have time");
 
-  else if (makemove (RUNTODOOR, rundoorinit, rundoorvalue, REEVAL))
-    { dwait (D_BATTLE, __func__, "Back to the door"); return (1); }
+  } else if (makemove (RUNTODOOR, rundoorinit, rundoorvalue, REEVAL)) {
+    dwait (D_BATTLE, __func__, "Back to the door"); return (1);
+  }
 
   return (0);
 }

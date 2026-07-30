@@ -39,6 +39,13 @@
 # include "config.h"
 # include "globals.h"
 
+# define xtr(w,b,e,k) { \
+    what=(w); \
+    xbeg=mess+(b); \
+    xend=mend-(e); \
+    xknow|=(k); \
+}
+
 /* static declarations */
 
 static char *stuffmess [] = {
@@ -122,9 +129,9 @@ dumpinv (FILE *f)
     at (1,0);
 
   for (i=0; i<MAXINV; i++) {
-    if (inven[i].count == 0)			/* No item here */
+    if (inven[i].count == 0) {			/* No item here */
       ;
-    else if (f != NULL)				/* Write to a file */
+    } else if (f != NULL)			/* Write to a file */
       { fprintf (f, "%s\n", itemstr (i)); }
     else {				/* Dump on the screen */
       printw ("%s\n", itemstr (i));
@@ -319,8 +326,6 @@ doresetinv (void)
  * inventory: parse an item message.
  */
 
-# define xtr(w,b,e,k) {what=(w);xbeg=mess+(b);xend=mend-(e);xknow|=(k);}
-
 int
 inventory (char *msgstart, char *msgend)
 {
@@ -456,47 +461,89 @@ inventory (char *msgstart, char *msgend)
   if ((mend[-1]=='s') && (mend[-2] != 's')) mend--;
 
   /* Now find what we have picked up: */
-  if (stlmatch(mend-4,"food")) {what=food; xknow=KNOWN;}
-  else if (stlmatch(mess,"amulet")) xtr(amulet,0,0,KNOWN)
-  else if (stlmatch(mess,"potion of ")) xtr(potion,10,0,KNOWN)
-  else if (stlmatch(mess,"potions of ")) xtr(potion,11,0,KNOWN)
-  else if (stlmatch(mess,"scroll of ")) xtr(Scroll,10,0,KNOWN)
-  else if (stlmatch(mess,"scrolls of ")) xtr(Scroll,11,0,KNOWN)
-  else if (stlmatch(mess,"staff of ")) xtr(wand,9,0,KNOWN)
-  else if (stlmatch(mess,"wand of ")) xtr(wand,8,0,KNOWN)
-  else if (stlmatch(mess,"ring of "))  xtr(ring,8,0,KNOWN)
-  else if (stlmatch(mess,"scrolls called ")) xtr(Scroll,15,0,KNOWN)
-  else if (stlmatch(mess,"scroll called ")) xtr(Scroll,14,0,KNOWN)
-  else if (stlmatch(mess,"scrolls titled '")) xtr(Scroll,16,1,0)
-  else if (stlmatch(mess,"scroll titled '")) xtr(Scroll,15,1,0)
-  else if (stlmatch(mess,"potions called ")) xtr(potion,15,0,KNOWN)
-  else if (stlmatch(mess,"potion called ")) xtr(potion,14,0,KNOWN)
-  else if (stlmatch(mess,"ring called ")) xtr(ring,12,0,KNOWN)
-  else if (stlmatch(mess,"wand called ")) xtr(wand,12,0,KNOWN)
-  else if (stlmatch(mess,"staff called ")) xtr(wand,13,0,KNOWN)
-  else if (stlmatch(mess,"apricot")) xtr(food,0,0,KNOWN)
-  else if (stlmatch(mess,"mango")) xtr(food,0,0,KNOWN)
-  else if (stlmatch(mess,"slime-mold")) xtr(food,0,0,KNOWN)
-  else if (stlmatch(mend-5,"arrow")) xtr(missile,0,0,0)
-  else if (stlmatch(mend-8,"shuriken")) xtr(missile,0,0,0)
-  else if (stlmatch(mend-6,"scroll")) xtr(Scroll,0,7,0)
-  else if (stlmatch(mend-6,"potion")) xtr(potion,0,7,0)
-  else if (stlmatch(mend-5,"staff")) xtr(wand,0,6,0)
-  else if (stlmatch(mend-4,"wand"))  xtr(wand,0,5,0)
-  else if (stlmatch(mend-4,"ring")) xtr(ring,0,5,0)
-  else if (stlmatch(mend-4,"mail")) xtr(armor,0,0,0)
-  else if (stlmatch(mend-5,"sword")) xtr(hitter,0,0,0)
-  else if (stlmatch(mend-4,"mace")) xtr(hitter,0,0,0)
-  else if (stlmatch(mend-6,"dagger")) xtr(missile,0,0,0)
-  else if (stlmatch(mend-5,"spear")) xtr(missile,0,0,0)
-  else if (stlmatch(mend-5,"armor")) xtr(armor,0,0,0)
-  else if (stlmatch(mend-3,"arm")) xtr(armor,0,0,0)
-  else if (stlmatch(mend-3,"bow")) xtr(thrower,0,0,0)
-  else if (stlmatch(mend-5,"sling")) xtr(thrower,0,0,0)
-  else if (stlmatch(mend-4,"dart")) xtr(missile,0,0,0)
-  else if (stlmatch(mend-4,"rock")) xtr(missile,0,0,0)
-  else if (stlmatch(mend-4,"bolt")) xtr(missile,0,0,0)
-  else xtr(strange,0,0,0)
+  if (stlmatch(mend-4,"food")) {
+      what=food; xknow=KNOWN;
+  } else if (stlmatch(mess,"amulet")) {
+      xtr(amulet,0,0,KNOWN);
+  } else if (stlmatch(mess,"potion of ")) {
+      xtr(potion,10,0,KNOWN);
+  } else if (stlmatch(mess,"potions of ")) {
+      xtr(potion,11,0,KNOWN);
+  } else if (stlmatch(mess,"scroll of ")) {
+      xtr(Scroll,10,0,KNOWN);
+  } else if (stlmatch(mess,"scrolls of ")) {
+      xtr(Scroll,11,0,KNOWN);
+  } else if (stlmatch(mess,"staff of ")) {
+      xtr(wand,9,0,KNOWN);
+  } else if (stlmatch(mess,"wand of ")) {
+      xtr(wand,8,0,KNOWN);
+  } else if (stlmatch(mess,"ring of "))  {
+      xtr(ring,8,0,KNOWN);
+  } else if (stlmatch(mess,"scrolls called ")) {
+      xtr(Scroll,15,0,KNOWN);
+  } else if (stlmatch(mess,"scroll called ")) {
+      xtr(Scroll,14,0,KNOWN);
+  } else if (stlmatch(mess,"scrolls titled '")) {
+      xtr(Scroll,16,1,0);
+  } else if (stlmatch(mess,"scroll titled '")) {
+      xtr(Scroll,15,1,0);
+  } else if (stlmatch(mess,"potions called ")) {
+      xtr(potion,15,0,KNOWN);
+  } else if (stlmatch(mess,"potion called ")) {
+      xtr(potion,14,0,KNOWN);
+  } else if (stlmatch(mess,"ring called ")) {
+      xtr(ring,12,0,KNOWN);
+  } else if (stlmatch(mess,"wand called ")) {
+      xtr(wand,12,0,KNOWN);
+  } else if (stlmatch(mess,"staff called ")) {
+      xtr(wand,13,0,KNOWN);
+  } else if (stlmatch(mess,"apricot")) {
+      xtr(food,0,0,KNOWN);
+  } else if (stlmatch(mess,"mango")) {
+      xtr(food,0,0,KNOWN);
+  } else if (stlmatch(mess,"slime-mold")) {
+      xtr(food,0,0,KNOWN);
+  } else if (stlmatch(mend-5,"arrow")) {
+      xtr(missile,0,0,0);
+  } else if (stlmatch(mend-8,"shuriken")) {
+      xtr(missile,0,0,0);
+  } else if (stlmatch(mend-6,"scroll")) {
+      xtr(Scroll,0,7,0);
+  } else if (stlmatch(mend-6,"potion")) {
+      xtr(potion,0,7,0);
+  } else if (stlmatch(mend-5,"staff")) {
+      xtr(wand,0,6,0);
+  } else if (stlmatch(mend-4,"wand"))  {
+      xtr(wand,0,5,0);
+  } else if (stlmatch(mend-4,"ring")) {
+      xtr(ring,0,5,0);
+  } else if (stlmatch(mend-4,"mail")) {
+      xtr(armor,0,0,0);
+  } else if (stlmatch(mend-5,"sword")) {
+      xtr(hitter,0,0,0);
+  } else if (stlmatch(mend-4,"mace")) {
+      xtr(hitter,0,0,0);
+  } else if (stlmatch(mend-6,"dagger")) {
+      xtr(missile,0,0,0);
+  } else if (stlmatch(mend-5,"spear")) {
+      xtr(missile,0,0,0);
+  } else if (stlmatch(mend-5,"armor")) {
+      xtr(armor,0,0,0);
+  } else if (stlmatch(mend-3,"arm")) {
+      xtr(armor,0,0,0);
+  } else if (stlmatch(mend-3,"bow")) {
+      xtr(thrower,0,0,0);
+  } else if (stlmatch(mend-5,"sling")) {
+      xtr(thrower,0,0,0);
+  } else if (stlmatch(mend-4,"dart")) {
+      xtr(missile,0,0,0);
+  } else if (stlmatch(mend-4,"rock")) {
+      xtr(missile,0,0,0);
+  } else if (stlmatch(mend-4,"bolt")) {
+      xtr(missile,0,0,0);
+  } else {
+      xtr(strange,0,0,0);
+  }
 
   /* Copy the name of the object into a string */
   for (p = objname, q = xbeg; q < xend;  p++, q++) *p = *q;
@@ -586,9 +633,8 @@ inventory (char *msgstart, char *msgend)
       inven[ipos].phit == plushit &&
       inven[ipos].pdam == plusdam) {
     inven[ipos].count = n;
-  }
   /* New item, in older Rogues, open up a spot in the pack */
-  else {
+  } else {
     if (version < RV53A) {
       rollpackdown (ipos);
     }
@@ -670,8 +716,9 @@ countpack (void)
   int i, cnt;
 
   for (objcount=0, larder=0, ammo=0, i=0; i<invcount; i++) {
-    if (! (cnt = inven[i].count))	; /* No object here */
-    else if (inven[i].type == missile)	{ objcount++; ammo += cnt; }
+    if (! (cnt = inven[i].count)) {
+      ; /* No object here */
+    } else if (inven[i].type == missile)	{ objcount++; ammo += cnt; }
     else if (inven[i].type == food)	{ objcount += cnt; larder += cnt; }
     else				{ objcount += cnt; }
   }

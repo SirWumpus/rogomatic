@@ -294,21 +294,21 @@ setpsd (int print)
       /* If attempt > 3, allow ANYTHING to be a secret door! */
       if (attempt > 3 && ! if_onrc (BEEN|DOOR|HALL|ROOM|WALL|STAIRS, i, j) &&
           nextto (CANGO, i, j))
-        { if (!if_onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j); }
+        { if (!if_onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j);
 
       /* Set Possible Secret Door for maze room secret doors */
-      else if (attempt > 0 && ! if_onrc (BEEN|DOOR|HALL|ROOM|WALL|STAIRS, i, j) &&
+      } else if (attempt > 0 && ! if_onrc (BEEN|DOOR|HALL|ROOM|WALL|STAIRS, i, j) &&
                mazedoor (i, j))
-        { if (!if_onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j); }
+        { if (!if_onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j);
 
       /* Set Possible Secret Door for corridor secret door */
-      else if (version >= RV53A &&
+      } else if (version >= RV53A &&
                ! if_onrc (BEEN|DOOR|HALL|ROOM|WALL|STAIRS, i, j) &&
                nextto (DOOR, i, j))
-        { if (!if_onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j); }
+        { if (!if_onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j);
 
       /* Set Possible Secret Door for dead end corridors */
-      else if (! if_onrc (BEEN|DOOR|HALL|ROOM|WALL|STAIRS, i, j) &&
+	} else if (! if_onrc (BEEN|DOOR|HALL|ROOM|WALL|STAIRS, i, j) &&
                (if_onrc (HALL, i-1, j) +
 		if_onrc (HALL, i+1, j) +
                 if_onrc (HALL, i, j-1) +
@@ -321,7 +321,6 @@ setpsd (int print)
         if (!if_onrc (PSD, i, j)) numberpsd++;
 
         setrc(DEADEND,i,j); setrc(PSD,i,j);
-      }
 
       /*
        * Set PSD for walls which connect to empty space
@@ -341,7 +340,7 @@ setpsd (int print)
        * mlm 03/17/85
        */
 
-      else {
+      } else {
         if ((k = wallkind (i,j)) >= 0) {	/* A legit sort of wall */
           int rm = whichroom (i,j);
 
@@ -564,24 +563,25 @@ runvalue (int r, int c, int depth, int *val, int *avd, int *cont)
   if (onrc (MONSTER, r, c))
     { *val = 0; }
 
-  if (onrc (STAIRS+TRAPDOR+TELTRAP, r, c))
-    { *val = 5000; *avd = 0; /* *cont = 0; */ }
-  else if (r == atrow && c == atcol)	/* If we are running, our current */
-    { *val = 0;}			/* cant be that great -- MLM      */
-  else if (onrc (RUNOK, r, c))
-    { *val = 4000; *cont = ROGINFINITY;}
-  else if (onrc (DOOR | BEEN, r, c) == DOOR)
-    { *val = 2000+depth; *cont = ROGINFINITY;}
-  else if (onrc (DOOR, r, c))
-    { *val = 1000+depth; *cont = ROGINFINITY;}
-  else if (onrc (HALL, r, c))
-    { *val =      depth; *cont = ROGINFINITY;}
+  if (onrc (STAIRS+TRAPDOR+TELTRAP, r, c)) {
+    *val = 5000; *avd = 0;			/* *cont = 0; */
+  } else if (r == atrow && c == atcol) {	/* If we are running, our current */
+    *val = 0;					/* cant be that great -- MLM      */
+  } else if (onrc (RUNOK, r, c)) {
+    *val = 4000; *cont = ROGINFINITY;
+  } else if (onrc (DOOR | BEEN, r, c) == DOOR) {
+    *val = 2000+depth; *cont = ROGINFINITY;
+  } else if (onrc (DOOR, r, c)) {
+    *val = 1000+depth; *cont = ROGINFINITY;
+  } else if (onrc (HALL, r, c)) {
+    *val =      depth; *cont = ROGINFINITY;
   /* ----------------------------------------------------------------
-  else if (onrc (CANGO | TRAP, r, c) == CANGO)
-    { *val = 1+depth; *cont = ROGINFINITY;}
+  } else if (onrc (CANGO | TRAP, r, c) == CANGO)
+    *val = 1+depth; *cont = ROGINFINITY;
   ---------------------------------------------------------------- */
-  else
-    { *val = 0; }
+  } else {
+    *val = 0;
+  }
 
   *avd += avdmonsters[r][c];
   return (1);
@@ -992,10 +992,9 @@ avoidmonsters (void)
     /* First check whether this monster is really wimpy */
     if (maxhit(i) < Hp/2) {
       AVOID (mlist[i].mrow, mlist[i].mcol, '$');
-    }
 
     /* If not a wimp and awake, avoid him all together */
-    else if (mlist[i].q == AWAKE) {
+    } else if (mlist[i].q == AWAKE) {
       int d, dr, dc, mr = mlist[i].mrow, mc = mlist[i].mcol;
       d = direc (searchstartr-mr,searchstartc-mc);
       dr = (searchstartr-mr)/2+mr; dc=(searchstartc-mc)/2+mc;
@@ -1008,18 +1007,16 @@ avoidmonsters (void)
         caddycorner (dr, dc, (d-2) & 7, d, '$');
         caddycorner (dr, dc, (d+2) & 7, d, '$');
       }
-    }
 
     /* If he'll wake up, give him a wide berth */
-    else if (!wearingstealth) {
+    } else if (!wearingstealth) {
       for (r = mlist[i].mrow-1; r<= mlist[i].mrow+1; r++)
         for (c = mlist[i].mcol-1; c<= mlist[i].mcol+1; c++)
           if (!if_onrc (WALL, r, c))
             AVOID (r, c, '$');
-    }
 
     /* He's asleep, don't try to run through him */
-    else {
+    } else {
       AVOID (mlist[i].mrow, mlist[i].mcol, '$');
     }
   }
@@ -1531,10 +1528,9 @@ restvalue (int r, int c, int depth __attribute__ ((__unused__)), int *val, int *
         if (if_onrc (DOOR,ar,ac)) *val += count;
       }
     }
-  }
 
   /* In dark rooms, stand diagonally away from doors (1 extra turn) */
-  else if (onrc (ROOM, r,   c)) {
+  } else if (onrc (ROOM, r,   c)) {
     if (if_onrc (DOOR, r-1, c-1) && (rm!=0 && rm!=1 && rm!=3)) {*val+=80; *cont=99;}
 
     if (if_onrc (DOOR, r+1, c-1) && (rm!=3 && rm!=6 && rm!=7)) {*val+=80; *cont=99;}

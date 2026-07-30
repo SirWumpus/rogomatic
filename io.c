@@ -1730,9 +1730,8 @@ getrogver (void)
     }
 
     rewind (logfile);			/* Put log file back to start */
-  }
 
-  else {				/* Execute the version command */
+  } else {				/* Execute the version command */
     sendnow ("v");
     waitfor ("ersion ");
 

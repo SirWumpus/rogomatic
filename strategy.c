@@ -320,11 +320,11 @@ fightmonster (void)
           wanddir = mdir = direc (rr-atrow, cc-atcol);
           monc = mon; m = i; mbad = howmean;
         }
-      }
 
       /* If we haven't yet a line of sight, check this guy out */
-      else if (wanddir == NONE)
-        { wanddir = direc (rr-atrow, cc-atcol); }
+      } else if (wanddir == NONE) {
+	wanddir = direc (rr-atrow, cc-atcol);
+      }
 
       /* Debugging breakpoint */
       if (valrc (rr,cc)) {
@@ -437,11 +437,11 @@ tomonster (void)
       adj++;				/* count number of monsters */
 
       /* If he is the closest monster, save his index and distance */
-      if (dist < closest)
-        { closest = dist; which = i; monc = mlist[i].chr; mbad = avghit(i); }
+      if (dist < closest) {
+	closest = dist; which = i; monc = mlist[i].chr; mbad = avghit(i);
 
       /* Or if he is meaner than another equally close monster, save him */
-      else if (dist == closest && avghit(i) > avghit(which)) {
+      } else if (dist == closest && avghit(i) > avghit(which)) {
         dwait (D_BATTLE, __func__, "Chasing %c: %d rather than %c: %d at distance: %d",
                mlist[i].chr, avghit(i), mlist[which].chr,
                avghit(which), dist);
@@ -1172,10 +1172,11 @@ fightinvisible (void)
   if (liberties == 1 || liberties == 2) {
     command (T_FIGHTING, "%c%c", keydir[lastdir], keydir[(lastdir+4)&7]);
     return (1);
-  }
 
   /* Try to get away, usually gets to a square with only 2 liberties */
-  else if (runaway ()) return (1);
+  } else if (runaway ()) {
+    return (1);
+  }
 
   /* Else run two and then double back on him. If that will */
   /* not work, run in a circle (will hit one out of 4)      */

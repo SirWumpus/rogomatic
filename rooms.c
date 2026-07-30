@@ -198,13 +198,13 @@ nametrap (int traptype, int standingonit)
 {
   int i, r, c, tdir = NONE, monsteradj = 0;
 
-  if (standingonit)
-    { r=atrow; c=atcol; }
+  if (standingonit) {
+    r=atrow; c=atcol;
 
-  else if (blinded)		/* Cant see, dont bother */
+  } else if (blinded) {		/* Cant see, dont bother */
     return;
 
-  else {
+  } else {
     /* Look all around and see what there is next to us */
     for (i = 0; i < DNUM; i++) {
       r = atdrow(i); c = atdcol(i);
@@ -220,20 +220,21 @@ nametrap (int traptype, int standingonit)
     }
 
     /* See one trap, set (r,c) to the trap location */
-    if (tdir != NONE)
-      { r = atdrow(tdir); c =  atdcol(tdir); }
+    if (tdir != NONE) {
+      r = atdrow(tdir); c =  atdcol(tdir);
 
     /* See no traps, if there is a monster adjacent, he could be on it */
-    else if (monsteradj)
+    } else if (monsteradj) {
       return;
 
     /* Cant ever sit on a trap door or a teleport trap */
-    else if (traptype == TRAPDOR || traptype == TELTRAP)
+    } else if (traptype == TRAPDOR || traptype == TELTRAP) {
       return;
 
     /* Cant see trap anywhere else, we must be sitting on it */
-    else
-      { r = atrow; c = atcol; }
+    } else {
+      r = atrow; c = atcol;
+    }
   }
 
   if (valrc (r,c)) {
@@ -409,8 +410,9 @@ currentrectangle (void)
 # define ckdoor(FLAG, NODOOR, STATIC, INC, S1, S2, I1, I2) \
     if (valrc (r, c) && (0 == (flags & FLAG))) \
     { any = 0; \
-      if (NODOOR) any = 1; \
-      else \
+      if (NODOOR) { \
+	any = 1; \
+      } else \
 	for (STATIC = S2, INC = I1; INC <= I2; INC++) \
 	  if (onrc (DOOR, r, c)) { any = 1; break; } \
       if (any) \
@@ -984,9 +986,8 @@ inferhall (int r, int c)
       if (dropout)
         break;
     }
-  }
 
-  else {
+  } else {
 
     if (dir == 2)
       dirch = 'd';

@@ -428,8 +428,7 @@ match5 (char ch1, char ch2, char ch3, char ch4, char ch5)
     PUTDEBUGCHAR (mch4);
     PUTDEBUGCHAR (mch5);
     return 1;
-  }
-  else {
+  } else {
     UNGETROGUECHAR (mch5);
     UNGETROGUECHAR (mch4);
     UNGETROGUECHAR (mch3);

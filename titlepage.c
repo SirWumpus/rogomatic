@@ -69,7 +69,7 @@ static char *titlepage[]= {
   "Bt3Co3Db3Ee3Fr3H13I03J,3L13M93N83O34 T4!o4\"t4#a4$l4&w4'i4(n4)n4*e4+r4-a",
   "4.g4/a40i41n42s43t45R46o47g48u49e4;54<.4=34>,4@F4Ae4Bb4Cr4Du4Ea4Fr4Gy4I1",
   "4J64K,4M14N94O84P45 T5!o5\"t5#a5$l5&w5'i5(n5)n5*e5+r5-a5.g5/a50i51n52s53",
-  "t55R56o57g58u59e5;55<.5=45>.5?55@,5BT5CB5DD",
+  "t55R56o57g58u59e5;55<.5=45>.5?55@,5BT5CB5DD", /* wrap string to fill lines */
   /* add total winner date against 5.4.5 here when it happens */
   "6 c6!h6\"o6#n6$g6%o6& 6'<6(L6)a6*n6+d6,o6-n6. 6/C60u61",
   "r62t63 64N65o66l67l68>69 6:/6;\\6<.6=.6>/6?\\~~~~~~~~~~~~~~~~~~~~~~~~~~~",
@@ -132,16 +132,14 @@ animate (char *movie[])
       flash();
       refresh ();				/* Write out screen */
 #endif
-    }
 
     /* Update the screen and delay until one timestep is gone */
-    else if (r == '~') {
+    } else if (r == '~') {
       refresh ();				/* Write out screen */
       (void) nanosleep(&rqt, NULL);
-    }
 
     /* Write out a single character */
-    else {
+    } else {
       r -= 32;					/* Get screen row */
       c = NEXTCHAR - 32;			/* Get screen col */
       mvaddch (r, c, NEXTCHAR);			/* Write out character */

@@ -88,37 +88,33 @@ worth (int obj)
     else if (obj == havearmor (3, NOPRINT, ANY))	value += 800;
 
     if (stlmatch (inven[obj].str, "leather"))		value += 300;
-  }
 
   /*
    * Bow values are based on bow class, bonus for best
    * or second best.
    */
 
-  else if (inven[obj].type == thrower) {
+  } else if (inven[obj].type == thrower) {
     value = (bowclass (obj));
 
     if (obj == havebow (1, NOPRINT)) value += 1500;
     else if (obj == havebow (2, NOPRINT)) value += 300;
-  }
 
   /* Weapons values are counted by hit potential, bonus for best */
-  else if ((w = weaponclass (obj)) > 0) {
+  } else if ((w = weaponclass (obj)) > 0) {
     value = w * 5;
 
     if (obj == haveweapon (1, NOPRINT)) value += 2500;
     else if (obj == haveweapon (2, NOPRINT)) value += 1500;
-  }
 
   /* Rings values are counted by bonus */
-  else if ((w = ringclass (obj)) > 0) {
+  } else if ((w = ringclass (obj)) > 0) {
     if (w > 1000) w -= 500; /* Subtract part of food bonus */
 
     value = w + 400;
-  }
 
   /* For arbitrary things, bonus for plus item */
-  else {
+  } else {
     if (inven[obj].phit != UNKNOWN)
       value += inven[obj].phit * 75;
   }

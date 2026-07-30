@@ -40,6 +40,7 @@ CAT= cat
 CC= cc
 CHGRP= chgrp
 CHMOD= chmod
+CLANG_FORMAT= clang-format
 CMP= cmp
 COLCRT= colcrt
 CP= cp
@@ -222,8 +223,7 @@ TARGETS= rogomatic player rgmplot histplot gene run_rogo rerun_rogo unstuck_play
 #
 BUILD_H_SRC= modern_curses.h have_strlcpy.h have_strlcat.h
 
-H_SRC= ${BUILD_H_SRC} config.h getroguetoken.h globals.h install.h strl.h \
-	termtokens.h types.h
+H_SRC= config.h getroguetoken.h globals.h install.h strl.h termtokens.h types.h
 
 OBJS= arms.o command.o config.o database.o debug.o debuglog.o explore.o fork_exec.o \
 	getroguetoken.o io.o learn.o ltm.o main.o mess.o monsters.o pack.o \
@@ -239,7 +239,7 @@ MISC_C= setup.c histplot.c rgmplot.c gene.c
 
 C_SRC= ${CFILES} ${MISC_C}
 
-SRC= ${C_SRC} ${H_SRC}
+SRC= ${C_SRC} ${H_SRC} ${BUILD_H_SRC}
 
 SH_SRC= run_rogo.sh rerun_rogo.sh unstuck_player.sh end_player.sh
 
@@ -472,6 +472,11 @@ end_player: end_player.sh
 form_rogomatic_cat_in: rogomatic.6.in
 	${RM} -f rogomatic.cat.in
 	${GROFF} -Tascii -man rogomatic.6.in | LC_CTYPE=C ${SED} -e 's/.\x08//g' > rogomatic.cat.in
+
+# reformat primary (non-built) source using clang-format
+#
+clang-format: .clang-format ${C_SRC} ${H_SRC}
+	${CLANG_FORMAT} -i --style=file:.clang-format ${C_SRC} ${H_SRC}
 
 # compile all with gcc-16, full warnings, no optimizer, no ASAN
 #
@@ -867,7 +872,7 @@ depend: ${SRC}
 	    ${SED} -n '/^#[	 ]*include[	 ]*"/p' "$$i" > "skel/$$i"; \
 	done
 	${Q} ${MKDIR} -p skel/custom
-	-${Q} for i in ${H_SRC} /dev/null; do \
+	-${Q} for i in ${H_SRC} ${BUILD_H_SRC} /dev/null; do \
 	    if [ X"$$i" != X"/dev/null" ]; then \
 		tag="`echo $$i | ${SED} 's/[\.+,:]/_/g'`"; \
 		echo "#if !defined($$tag)" > "skel/$$i"; \

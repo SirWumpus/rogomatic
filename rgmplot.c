@@ -150,8 +150,9 @@ main (int argc, char *argv[])
 
     if (score > EOF) {
       if ((h = SCALE(score)) >= WIDTH) { snprintf (buf, MU_BUF, " %d", score);  strlcat(plot, buf, sizeof(plot)); }
-      else if (plot[h] == '9')          ;
-      else if (isdigit(plot[h]))        plot[h]++;
+      else if (plot[h] == '9') {
+	;
+      } else if (isdigit(plot[h]))        plot[h]++;
       else                              plot[h] = '1';
 
       *sum += score;

@@ -127,10 +127,9 @@ analyzepool (int full)
 
       printf ("%s%5.2lf+%1.2lf\n", knob_name[k], mean (&gs), stdev (&gs));
     }
-  }
 
   /* List detail of gene pool */
-  else {
+  } else {
     for (g=0; g<length; g++) {
       printf ("Living: "); summgene (stdout, genes[g]);
 
@@ -257,20 +256,18 @@ pickgenotype (void)
     }
 
     shift (father, new);
-  }
 
   /* Mutate a single genotype with probability pmutate */
-  else if (rogo_randint (100-pshift) < pmutate) {
+  } else if (rogo_randint (100-pshift) < pmutate) {
     if (glog) {
       fprintf (glog, "Select: "); summgene (glog, genes[father]);
       fprintf (glog, "Death:  "); summgene (glog, genes[new]);
     }
 
     mutate (father, new);
-  }
 
   /* Cross two genotypes with probability 1-pshift-pmutate */
-  else {
+  } else {
     if (glog) {
       fprintf (glog, "Select: "); summgene (glog, genes[father]);
       fprintf (glog, "Select: "); summgene (glog, genes[mother]);

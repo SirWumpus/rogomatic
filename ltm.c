@@ -61,16 +61,17 @@ mapcharacter (char ch, char *str)
   dwait (D_CONTROL, __func__, "'%c' ==> '%s'", ch, str);
 
   /* Ancient versions of Rogue had no wands or staves */
-  if (ch == '/' && stlmatch (str, "unknown"))
+  if (ch == '/' && stlmatch (str, "unknown")) {
     version = RV36A;
 
   /* Dont map any unknown character */
-  else if (stlmatch (str, "unknown"))
+  } else if (stlmatch (str, "unknown")) {
     ;
 
   /* If it is a monster, set its array index */
-  else if (ch >= 'a' && ch <= 'z')
-    { monindex[ch-'a'+ 1] = addmonhist (str); }
+  } else if (ch >= 'a' && ch <= 'z') {
+    monindex[ch-'a'+ 1] = addmonhist (str);
+  }
 }
 
 /*
