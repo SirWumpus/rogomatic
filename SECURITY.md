@@ -19,7 +19,8 @@ your efforts to responsibly disclose your findings, and will make every
 effort to acknowledge your contributions for any verified security issues
 when they have been fixed.
 
-To report a security issue, click on: "[Open a draft security advisory](https://github.com/lcn2/rogomatic/security/advisories/new)"
+To report a security issue, click on:
+"[Open a draft security advisory](https://github.com/lcn2/rogomatic/security/advisories/new)"
 
 We will send a response indicating the next steps in handling your
 report. After the initial reply to your report, we will keep you informed
@@ -29,8 +30,8 @@ additional information or guidance.
 
 ## Supported Versions
 
-The only supported version of rogomatic is version **14.2.12 2026-07-18** or later,
-and then only when used with rogue version **5.4.5 2026-07-18** or later
+The only supported version of rogomatic is version **14.3.0 2026-08-03** or later,
+and then only when used with rogue version **5.4.5 2026-08-03** or later
 from the [Rogue 5.4 repo](https://github.com/lcn2/rogue5.4).
 
 Running either rogue, or rogomatic as setuid or setgid is **NOT** supported.

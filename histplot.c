@@ -53,7 +53,8 @@
  * global declarations
  */
 
-int cheat = false;
+int creative = false;
+bool quiet = false;      /* true ==> quiet mode */
 
 /*
  * static declarations
@@ -81,7 +82,7 @@ main (int argc, char *argv[])
   while (--argc > 0 && (*++argv)[0] == '-')
     while (*++(*argv)) {
       switch (**argv) {
-        case 'c': cheat++; break; /* List cheat games */
+        case 'c': creative = true; break; /* List creative games */
         case 'l': dolev++; break; /* Plot level instead of score */
         case 'a': minscore = atoi (*argv+1); SKIPARG; break;
         default:  printf ("Usage: histplot [-cl] [-aNNNN]\n");
@@ -200,17 +201,19 @@ static int
 getscore (int *score, char *killer, int *level)
 {
   int dd, yy;
-  char line[128], mmstr[8], player[16], cheated=' ';
+  char line[128], mmstr[8], player[16], creativity=' ';
 
   while (fgets (line, 128, stdin)) {
     dd = yy = *score = 0;
     sscanf (line, "%s %d, %d %10s%d%c%17s",
-            mmstr, &dd, &yy, player, score, &cheated, killer);
+            mmstr, &dd, &yy, player, score, &creativity, killer);
 
     if (strlen (line) > LEVELPOS) *level = atoi (line+LEVELPOS);
 
     if (yy > 0 &&
-        (cheated != '*' || cheat) &&
+#if defined(NOTE_CREATIVE_MODE)
+        (creativity != '*' || creative) &&
+#endif
         !stlmatch ("saved", killer) &&
         (*score > 2000 || !stlmatch ("user", killer)))
       return (1);

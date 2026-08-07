@@ -394,7 +394,13 @@ showcommand (char *cmd)
     i += strlen (unctrl(*s));
   }
 
-  printw (" "); standend (); clrtoeol (); at (row, col); refresh ();
+  printw (" ");
+  standend ();
+  clrtoeol ();
+  at (row, col);
+  if (!quiet) {
+    refresh ();
+  }
   cmdonscreen = true;
 }
 

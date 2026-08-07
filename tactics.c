@@ -312,7 +312,7 @@ readscroll (void)
        (obj2 = unidentified (wand)) != NONE ||
        (obj2 = unidentified (Scroll)) != NONE ||
        (Level > 10 && (obj2 = unknown (wand)) != NONE) ||
-       ((cheat || version == RV36A) &&
+       ((creative || version == RV36A) &&
         ((obj2 = unknown (potion)) != NONE ||
          (obj2 = haveother (Scroll, obj)) != NONE)))) {
     prepareident (obj2, obj);
@@ -503,8 +503,8 @@ grope (int turns)
 int
 findarrow (void)
 {
-  /* If wrong version, not cheating or must go find food, then forget it */
-  if (version > RV36B || !cheat || hungry()) {
+  /* If wrong version, not using creative strategies or must go find food, then forget it */
+  if (version > RV36B || !creative || hungry()) {
     return (0);
 
   } else if (!usingarrow && foundarrowtrap && !on (ARROW) &&
@@ -553,7 +553,7 @@ godownstairs (int running)
   /* Don't go down until we have killed five monsters in one blow.   */
   /* While waiting, run back and forth to look for monsters.        */
 
-  if (cheat && version <= RV36B && !running &&
+  if (creative && version <= RV36B && !running &&
       foundarrowtrap && usingarrow &&
       have (food) != NONE && goodarrow < 5 && waitaround ()) {
     saynow ("Checking out arrow...");

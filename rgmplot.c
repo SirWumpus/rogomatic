@@ -50,12 +50,14 @@
  * global declarations
  */
 
-int cheat = false;
+int creative = false;
 
 static char *month[] = {
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 };
+
+bool quiet = false;      /* true ==> quiet mode */
 
 /*
  * static declarations
@@ -65,7 +67,7 @@ static int doavg = 0;
 static int minscore = -1;
 
 static int getlin (char *s);
-static int getscore (int *mm, int *dd, int *yy, char *player, int *score, char *cheated);
+static int getscore (int *mm, int *dd, int *yy, char *player, int *score, char *creativity);
 
 int
 main (int argc, char *argv[])
@@ -77,7 +79,7 @@ main (int argc, char *argv[])
   int rsum, rnum, davg, ravg;
   char player[MU_BUF + 1]; /* rogue player, +1 for paranoia */
   char plot[MU_BUF + 1]; /* plot string, +1 for paranoia */
-  char cheated;
+  char creative;
   char buf[MU_BUF + 1]; /* message buffer, +1 for paranoia */
 
   /* zeroize arrays */
@@ -93,7 +95,7 @@ main (int argc, char *argv[])
   while (--argc > 0 && (*++argv)[0] == '-')
     while (*++(*argv)) {
       switch (**argv) {
-        case 'c': cheat++; break; /* List cheat games */
+        case 'c': creative = true; break; /* List creative games */
         case 'a': doavg++; break; /* Print average */
         default:  printf ("Usage: rgmplot [-ac] [mininum]\n");
           exit (1);
@@ -116,7 +118,7 @@ main (int argc, char *argv[])
   strlcpy (plot, "|                                                 |", sizeof(plot));
 
   /* While more scores do action for each score */
-  while (getscore (&mm, &dd, &yy, player, &score, &cheated) != EOF) {
+  while (getscore (&mm, &dd, &yy, player, &score, &creative) != EOF) {
     /* Change days, overprint the average for day, rolling avg */
     if ((dd != lastday || mm != lastmon || yy != lastyy) && lastday > 0) {
       if (doavg) {
@@ -205,7 +207,7 @@ getlin (char *s)
 }
 
 static int
-getscore (int *mm, int *dd, int *yy, char *player, int *score, char *cheated)
+getscore (int *mm, int *dd, int *yy, char *player, int *score, char *creativity)
 {
   char line[TY_BUF + 1];
   char reason[TY_BUF + 1];
@@ -216,10 +218,12 @@ getscore (int *mm, int *dd, int *yy, char *player, int *score, char *cheated)
 
   while (getlin (line) != EOF) {
     sscanf (line, "%d %d, %d %10s%d%c%17s",
-            mm, dd, yy, player, score, cheated, reason);
+            mm, dd, yy, player, score, creativity, reason);
 
     if ((*score >= minscore || *score < 0) &&
-        (*cheated != '*' || cheat) &&
+#if defined(NOTE_CREATIVE_MODE)
+        (*creativity != '*' || creative) &&
+#endif
         !stlmatch (reason, "saved") &&
         (*score > 2000 || !stlmatch (reason, "user")))
       return (1);

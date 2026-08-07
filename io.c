@@ -305,7 +305,9 @@ getrogue (char *waitstr, int onat)
     printw("getrogue: waitstr ->%s<-  onat %d.",
            waitstr, onat);
     at (row, col);
-    refresh ();
+    if (!quiet) {
+      refresh ();
+    }
   }
 
   /* While we have not reached the end of the Rogue input, read */
@@ -358,7 +360,9 @@ getrogue (char *waitstr, int onat)
 	at (R,0);
 	clrtoeol ();
 	printw ("timeout!");
-	refresh ();
+	if (!quiet) {
+	  refresh ();
+	}
       }
     }
 
@@ -371,7 +375,9 @@ getrogue (char *waitstr, int onat)
       at (28,col);
       printw ("%s", unctrl(ch));
       at (row, col);
-      refresh ();
+      if (!quiet) {
+	refresh ();
+      }
     }
     clear_alarm ();	/* we did not hang, cancel the timeout timer */
 
@@ -1036,7 +1042,7 @@ getrogue (char *waitstr, int onat)
 
   at (row, col);
 
-  if (!emacs && !terse) {
+  if (!emacs && !terse && !quiet) {
     refresh ();
   }
 
@@ -1135,12 +1141,13 @@ terpbot (void)
 
         if (strlen (modeline) > C-8) snprintf (modeline, SM_BUF, " %s", screen[R-1]);
 
-        fprintf (realstdout, "%s", modeline);
-        fflush (realstdout);
-      }
-      else if (terse && oldlev != Level) {
-        fprintf (realstdout, "%s\n", screen[R-1]);
-        fflush (realstdout);
+	if (!quiet) {
+	  fprintf (realstdout, "%s", modeline);
+	  fflush (realstdout);
+	}
+      } else if (terse && oldlev != Level && !quiet) {
+	fprintf (realstdout, "%s\n", screen[R-1]);
+	fflush (realstdout);
       }
     }
   }
@@ -1343,7 +1350,9 @@ deadrogue (void)
 
   printw ("\n\nOh dear, %s died while inside the dungeon!",
 	  (playername[0] == '\0') ? "((rogo-rogue))" : playername);
-  refresh ();
+  if (!quiet) {
+    refresh ();
+  }
 
   sscanf (&screen[GOLDROW][TOMBCOL], "%18d", &Gold);
 
@@ -1398,10 +1407,17 @@ quitrogue (char *reason, int gld, int terminationtype)
 
   /* Build a summary line */
   memset (sumline, 0, sizeof(sumline)); /* paranoia */
+#if defined(NOTE_CREATIVE_MODE)
   snprintf (sumline, SM_BUF, "%4d %3s %02d %02d:%02d:%02d %-.32s %7d%s%-17.17s %3d %3d ",
 	   1900 + ts -> tm_year, month[ts -> tm_mon], ts -> tm_mday,
 	   ts -> tm_hour, ts -> tm_min, ts -> tm_sec,
-           getname (), gld, cheat ? "*" : " ", reason, MaxLevel, Hpmax);
+           getname (), gld, creative ? "*" : " ", reason, MaxLevel, Hpmax);
+#else
+  snprintf (sumline, SM_BUF, "%4d %3s %02d %02d:%02d:%02d %-.32s %7d%s%-17.17s %3d %3d ",
+	   1900 + ts -> tm_year, month[ts -> tm_mon], ts -> tm_mday,
+	   ts -> tm_hour, ts -> tm_min, ts -> tm_sec,
+           getname (), gld, " ", reason, MaxLevel, Hpmax);
+#endif
 
   memset (sumline2, 0, sizeof(sumline2)); /* paranoia */
   if (Str % 100)
@@ -1414,7 +1430,10 @@ quitrogue (char *reason, int gld, int terminationtype)
             SM_BUF, sumline2, Ac, Explev, Exp, ltm.gamecnt, dnum);
 
   /* Now write the summary line to the log file */
-  at (R-1, 0); clrtoeol (); refresh ();
+  at (R-1, 0); clrtoeol ();
+  if (!quiet) {
+    refresh ();
+  }
 
   /* R-2 is index of score in sumline */
   if (!replaying)
@@ -1509,9 +1528,8 @@ quitrogue (char *reason, int gld, int terminationtype)
    * try to kill it nicely (with a SIGHUP) before terminating it.
    */
   if (stat_loc == -1) {
-      quit (1, "ERROR: %s: file: %s line: %d dungeon: %u waitpid (%d, &stat_loc, 0x%x) stat_loc remains -1\n",
-	       __func__, __FILE__, __LINE__, dnum, rogpid, options);
-      not_reached ();
+    fprintf(stderr, "\nrogue pid %d appears to have previously exited\n", rogpid);
+    return;
   }
   if (ret == 0 || WIFSTOPPED(stat_loc) || WIFCONTINUED(stat_loc)) {
 
@@ -1539,7 +1557,6 @@ quitrogue (char *reason, int gld, int terminationtype)
 	return;
       }
     }
-    fprintf(stderr, "\nrogue pid %d appears to have finally exited\n", rogpid);
   }
   return;
 }
@@ -1568,7 +1585,7 @@ waitfor (char *mess)
 }
 
 /*
- * say: Display a messsage on the top line. Restore cursor to Rogue.
+ * say: Display a message on the top line. Restore cursor to Rogue.
  */
 
 void
@@ -1578,7 +1595,7 @@ say (char *f, ...)
   char *b;
   va_list ap;
 
-  if (!emacs && !terse) {
+  if (!emacs && !terse && !quiet) {
     memset (buf, 0, sizeof(buf)); /* paranoia */
     va_start (ap, f);
     vsnprintf (buf, BUFSIZ, f, ap);
@@ -1607,7 +1624,7 @@ saynow (char *f, ...)
   char *b;
   va_list ap;
 
-  if (!emacs && !terse) {
+  if (!emacs && !terse && !quiet) {
     memset (buf, 0, sizeof(buf)); /* paranoia */
     if (f != NULL) {
       va_start (ap, f);
@@ -1622,7 +1639,9 @@ saynow (char *f, ...)
     clrtoeol ();
     at (row, col);
   }
-  refresh ();
+  if (!quiet) {
+    refresh ();
+  }
 }
 
 /*
@@ -1635,7 +1654,9 @@ waitforspace (void)
 {
   char ch;
 
-  refresh ();
+  if (!quiet) {
+    refresh ();
+  }
 
   if (!noterm) {
     set_alarm ();	/* in case we hang reading from rogue, set a timeout timer */
@@ -1690,7 +1711,9 @@ pauserogue (void)
   at (R-1, 0);
   addstr ("--More--");
   clrtoeol ();
-  refresh ();
+  if (!quiet) {
+    refresh ();
+  }
 
   waitforspace ();
 
@@ -1747,8 +1770,10 @@ getrogver (void)
   else if (stlmatch (versionstr, "5.2"))	version = RV52A;
   else if (stlmatch (versionstr, "5.3"))	version = RV53A;
   else if (stlmatch (versionstr, "5.4.4"))	version = RV54A;
-  else if (stlmatch (versionstr, "5.4.5"))	version = RV54B;
-  else {
+  else if (stlmatch (versionstr, "5.4.5")) {
+      version = RV54B;
+      creative = true;	    /* rogue 5.4.5 or later enables creative mode by default */
+  } else {
 
     /*
      * unable too parse the rogue version
@@ -1804,7 +1829,9 @@ redrawscreen (void)
 
   at (row, col);
 
-  refresh ();
+  if (!quiet) {
+    refresh ();
+  }
 }
 
 /*
@@ -1836,8 +1863,12 @@ toggleecho (void)
     if (playing) saynow ("File %s closed", gamelog_path);
   }
 
-  if (playing)
-    { at (row, col); refresh (); }
+  if (playing) {
+    at (row, col);
+    if (!quiet) {
+      refresh ();
+    }
+  }
 }
 
 /*

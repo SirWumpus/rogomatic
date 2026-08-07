@@ -829,7 +829,7 @@ battlestations (int m, char *monster, int mbad, int danger, int mdir, int mdist,
    * If we trust our magic arrow, give it a whirl
    */
 
-  if (!confused && cheat && usingarrow && goodarrow > 10 && turns == 0)
+  if (!confused && creative && usingarrow && goodarrow > 10 && turns == 0)
     return (0);
 
   /*
@@ -1163,9 +1163,9 @@ fightinvisible (void)
   /* Count how many orthogonal moves we can make */
   for (dir=0; dir<8; dir++)
     if (atdrow(dir) > 0 && atdrow(dir) < R-1 &&
-        onrc(CANGO, atdrow(dir), atdcol(dir)) &&
-        onrc(CANGO, atdrow(dir), atcol) &&
-        onrc(CANGO, atrow, atdcol(dir)))
+        if_onrc(CANGO, atdrow(dir), atdcol(dir)) &&
+        if_onrc(CANGO, atdrow(dir), atcol) &&
+        if_onrc(CANGO, atrow, atdcol(dir)))
       { liberties++; lastdir = dir; }
 
   /* If can only go two ways, then go back and forth (will hit) */
@@ -1181,8 +1181,8 @@ fightinvisible (void)
   /* Else run two and then double back on him. If that will */
   /* not work, run in a circle (will hit one out of 4)      */
   for (dir=0; dir<8; dir += 2)
-    if ((onrc(CANGO, atdrow(dir), atdcol(dir))) &&
-        (onrc(CANGO, atrow+2*deltr[dir], atcol+2*deltc[dir])))
+    if ((if_onrc(CANGO, atdrow(dir), atdcol(dir))) &&
+        (if_onrc(CANGO, atrow+2*deltr[dir], atcol+2*deltc[dir])))
       break;
 
   if (dir > 7)	command (T_FIGHTING, "hjlk");

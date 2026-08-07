@@ -44,7 +44,7 @@ will cause `./rerun_rogo` to stop the rerun cycle when `rogue(6)` next exits.
 ## IMPORTANT: Use with rogue 5.4.5
 
 This rogomatic code is designed to be used with **rogue version
-5.4.5 release 2026-07-18**, or any later release
+5.4.5 release 2026-08-03**, or any later release
 from [rogue version 5.4.5](https://github.com/lcn2/rogue5.4).
 
 See [rogue version 5.4.5](https://github.com/lcn2/rogue5.4) for the
@@ -245,7 +245,7 @@ The [rogomatic repo](https://github.com/lcn2/rogomatic) started out as a clone o
 [rogueforge rogomatic14 repo](https://github.com/rogueforge/rogomatic14).
 
 **IMPORTANT NOTE**: This rogomatic code is designed to be used with **rogue version
-5.4.5 release 2026-07-18**, or any later release
+5.4.5 release 2026-08-03**, or any later release
 from [rogue version 5.4.5](https://github.com/lcn2/rogue5.4).
 
 See [rogue version 5.4.5](https://github.com/lcn2/rogue5.4) for the

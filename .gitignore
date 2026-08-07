@@ -5,8 +5,11 @@ asan.log.*
 *.dSYM
 end_player
 gene
+have_stdbool
 have_stdbool.h
+have_strlcat
 have_strlcat.h
+have_strlcpy
 have_strlcpy.h
 histplot
 index
@@ -14,6 +17,7 @@ lex.yy.c
 .lldbinit
 Makefile.bak
 modern_curses.h
+mrerun_rogo
 NOTES
 *.o
 player
@@ -31,3 +35,4 @@ skel/
 tags
 titlepage
 unstuck_player
+unused_tmp

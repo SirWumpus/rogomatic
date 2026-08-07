@@ -130,12 +130,16 @@ animate (char *movie[])
 #if 0 /* no beep */
       beep();
       flash();
-      refresh ();				/* Write out screen */
+      if (!quiet) {
+	refresh ();				/* Write out screen */
+      }
 #endif
 
     /* Update the screen and delay until one timestep is gone */
     } else if (r == '~') {
-      refresh ();				/* Write out screen */
+      if (!quiet) {
+	refresh ();				/* Write out screen */
+      }
       (void) nanosleep(&rqt, NULL);
 
     /* Write out a single character */
@@ -193,12 +197,14 @@ halftimeshow (int level)
 
 # if defined(TITLEPAGE_MAIN)
 
+bool quiet = false;      /* true ==> quiet mode */
+
 int
 main (void)
 {
   /* initialize the Curses package */
   initscr ();
-  crmode ();
+  cbreak ();
   noecho ();
 
   /* display the title page */
@@ -210,7 +216,7 @@ main (void)
 
   /* turn on echo and turn off raw */
   (void) echo ();
-  (void) noraw ();
+  (void) nocbreak ();
 
   /* clean up and delete curses */
   (void) endwin ();

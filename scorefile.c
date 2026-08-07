@@ -250,12 +250,17 @@ dumpscore (char *vers)
     not_reached ();
   }
 
-  printf ("Rog-O-Matic Scores against version %s:\n\n", vers);
-  printf ("%s%s", "Date        Time     User           Gold Killed by",
-	  "         Lvl  Hp  Str  Ac  Exp        Game Dungeon\n");
+  if (!quiet) {
+    printf ("Rog-O-Matic Scores against version %s:\n\n", vers);
+    printf ("%s%s", "Date        Time     User           Gold Killed by",
+	    "         Lvl  Hp  Str  Ac  Exp        Game Dungeon\n");
+  }
 
-  while ((int) (ch = fgetc (scoref)) != EOF)
-    putchar (ch);
+  while ((int) (ch = fgetc (scoref)) != EOF) {
+    if (!quiet) {
+      putchar (ch);
+    }
+  }
 
   fclose (scoref);
 

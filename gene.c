@@ -61,6 +61,7 @@ char *knob_name[MAXKNOB] = {
   "waking monsters:  ",
   "hoarding food:    "
 };
+bool quiet = false;      /* true ==> quiet mode */
 
 int
 main (int argc, char *argv[])

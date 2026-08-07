@@ -212,7 +212,7 @@ OTHER_TARGES= titlepage
 #
 OBSOLETE_TARGETS= kill_player kill_player.sh run-rogo run-rogo.sh rerun-rogo rerun-rogo.sh
 
-TARGETS= rogomatic player rgmplot histplot gene run_rogo rerun_rogo unstuck_player end_player
+TARGETS= rogomatic player rgmplot histplot gene run_rogo rerun_rogo unstuck_player end_player mrerun_rogo
 
 
 ################################
@@ -241,7 +241,7 @@ C_SRC= ${CFILES} ${MISC_C}
 
 SRC= ${C_SRC} ${H_SRC} ${BUILD_H_SRC}
 
-SH_SRC= run_rogo.sh rerun_rogo.sh unstuck_player.sh end_player.sh
+SH_SRC= run_rogo.sh rerun_rogo.sh unstuck_player.sh end_player.sh mrerun_rogo.sh
 
 SH_TOOL= run_rogo
 
@@ -451,6 +451,10 @@ run_rogo: run_rogo.sh
 
 rerun_rogo: rerun_rogo.sh
 	${CP} -f rerun_rogo.sh $@
+	${CHMOD} +x $@
+
+mrerun_rogo: mrerun_rogo.sh
+	${CP} -f mrerun_rogo.sh $@
 	${CHMOD} +x $@
 
 unstuck_player: unstuck_player.sh

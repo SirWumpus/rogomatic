@@ -1108,6 +1108,7 @@ extern char *getname (void);
 extern FILE *wopen(char *fname, char *mode);
 extern int fexists (char *fn);
 extern int filelength (char *f);
+extern void ncurses_delete (void);
 extern void endwin_and_ncurses_cleanup (void);
 extern void inter_endwin_and_ncurses_cleanup (int sig __attribute__ ((__unused__)));
 extern void critical (void);

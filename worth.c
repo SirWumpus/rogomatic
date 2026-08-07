@@ -211,7 +211,7 @@ useless (int i)
   if (inven[i].type == ring && havemult (ring, inven[i].str, 3) != NONE)
     return (1);
 
-  /* If we are cheating and we have a good arrow */
+  /* If we are being creative and we have a good arrow */
   /* then many rings do us no good at all.       */
   if (inven[i].type == ring && usingarrow && goodarrow > 20 &&
       (stlmatch (inven[i].str, "add strength") ||

@@ -187,7 +187,7 @@ weaponclass (int i)
   if (inven[i].type == hitter) {
     ;
   /* Under special circumstances, arrows are valid weapons (Hee hee) */
-  } else if (cheat && inven[i].type == missile &&
+  } else if (creative && inven[i].type == missile &&
            stlmatch (inven[i].str, "arrow")) {
     ;
   /* Not a valid weapon */
@@ -218,17 +218,17 @@ weaponclass (int i)
 
   /*
    * Strategy for "Magic Arrows". These are single arrows when
-   * we are cheating. Since arrows normally come in clumps, and
-   * since we have never (in cheat mode) thrown any, then a
+   * we are being creative. Since arrows normally come in clumps, and
+   * since we have never (in creative mode) thrown any, then a
    * single arrow must have come from a trap, and until it fails
    * to kill something, we assume it is a valuable arrow.
    */
 
-  } else if (cheat && version <= RV36B && usingarrow && goodarrow > 20 &&
+  } else if (creative && version <= RV36B && usingarrow && goodarrow > 20 &&
            i == currentweapon) {
     return (1800);
 
-  } else if (cheat && version <= RV36B && stlmatch (inven[i].str, "arrow") &&
+  } else if (creative && version <= RV36B && stlmatch (inven[i].str, "arrow") &&
            inven[i].count == 1 && !itemis (i, WORTHLESS) &&
            (!badarrow || i != currentweapon))
     { hitplus = 50;  damplus = 50; }
@@ -536,7 +536,7 @@ bowclass (int i)
 
 /*
  * havemissile: Return best missile. Dont consider arrows if we
- * are cheating.  Consider arrows first if we are wielding our bow.
+ * are being creative.  Consider arrows first if we are wielding our bow.
  */
 
 int

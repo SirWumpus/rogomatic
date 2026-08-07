@@ -32,7 +32,7 @@
 
 # setup
 #
-export VERSION="1.2.0 2026-07-22"
+export VERSION="1.2.1 2026-07-31"
 NAME=$(basename "$0")
 export NAME
 #
@@ -83,8 +83,6 @@ Exit codes:
      0         all OK
      2         -h and help string printed or -V and version string printed
      3         command line error
-     5         some internal tool is not found or not an executable file
-     6         problems found with or in the rogomatic directory
  >= 10         internal error
 
 $NAME version: $VERSION"
@@ -136,8 +134,8 @@ while getopts :hv:VnND:r:R:m:u: flag; do
 	;;
   esac
 done
-if [[ $V_FLAG -ge 1 ]]; then
-    echo "$0: debug[1]: debug level: $V_FLAG" 1>&2
+if [[ $V_FLAG -ge 3 ]]; then
+    echo "$0: debug[3]: debug level: $V_FLAG" 1>&2
 fi
 #
 # remove the options
@@ -166,7 +164,6 @@ if [[ $V_FLAG -ge 3 ]]; then
     echo "$0: debug[3]: V_FLAG=$V_FLAG" 1>&2
     echo "$0: debug[3]: NOOP=$NOOP" 1>&2
     echo "$0: debug[3]: DO_NOT_PROCESS=$DO_NOT_PROCESS" 1>&2
-    echo "$0: debug[3]: V_FLAG=$V_FLAG" 1>&2
     echo "$0: debug[3]: RUNNING_RECHECK_SEC=$RUNNING_RECHECK_SEC" 1>&2
     echo "$0: debug[3]: RESTART_SEC=$RESTART_SEC" 1>&2
     echo "$0: debug[3]: MISSING_RECHECK_SEC=$MISSING_RECHECK_SEC" 1>&2
@@ -205,9 +202,13 @@ while :; do
     break
 done
 if [[ $V_FLAG -ge 1 ]]; then
-    echo "$0: writing log messages to: $UNSTUCK_LOG" 1>&2
+    if [[ $V_FLAG -ge 3 ]]; then
+	echo "$0: debug[3]: writing log messages to: $UNSTUCK_LOG" 1>&2
+    fi
     echo "$0: debug[1]: at $(date -u) RGMDIR is a writable directory: $RGMDIR" >> "$UNSTUCK_LOG"
-    echo "$0: to follow, use: tail -f -F $UNSTUCK_LOG" 1>&2
+    if [[ $V_FLAG -ge 3 ]]; then
+	echo "$0: debug[3]: to follow, use: tail -f -F $UNSTUCK_LOG" 1>&2
+    fi
 fi
 
 # monitor player processes

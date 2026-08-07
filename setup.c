@@ -51,7 +51,13 @@
 # define READ    0
 # define WRITE   1
 
-# define VERSION "14.2.16 2026-07-30"
+# define VERSION "14.2.17 2026-08-03"
+
+/*
+ * global declarations
+ */
+
+bool quiet = false;      /* true ==> quiet mode */
 
 /*
  * static declarations
@@ -59,7 +65,7 @@
 
 static const char * const usage =
   "usage: %s [-h] [-V] [-a secs] [-c] [-d] [-D rgmdir] [-e] [-E] [-f rogue] [-G goodlvl]\n"
-  "                   [-H] [-p] [-P player] [-r] [-S ROGOSEED] [-t] [-u] [-U usec] [-w]\n"
+  "                   [-H] [-p] [-P player] [-q] [-r] [-S ROGOSEED] [-t] [-u] [-U usec] [-w]\n"
   "                   [-s [rogue_ver] | r_file]\n"
   "\n"
   "    -h            print help message and exit\n"
@@ -77,6 +83,7 @@ static const char * const usage =
   "    -H            disable \"halftime\" show\n"
   "    -p            play back gamelog\n"
   "    -P player     set path to player\n"
+  "    -q            quiet mode: do not output rogue game play (def: do)\n"
   "    -r            restore saved rogue game (def: from rogue.sav)\n"
   "    -S ROGOSEED   set $ROGOSEED environment variable for rogue\n"
   "    -t            give status lines only\n"
@@ -110,7 +117,7 @@ int
 main (int argc, char *argv[])
 {
   int ptc[2], ctp[2];
-  bool cheat = false;		    /* true ==> Will use trap arrows */
+  bool creative = false;	    /* true ==> Will use trap arrows */
   bool time_subpath = false;	    /* true ==> uses UTC date and time sub-directory */
   bool echo = true;		    /* true ==> Echo file to gamelog */
   bool nohalf = false;		    /* true ==> No halftime show */
@@ -174,7 +181,7 @@ main (int argc, char *argv[])
   /*
    * parse args
    */
-  while ((i = getopt (argc, argv, ":hVa:cdD:ef:G:HpP:rs:S:tuU:wE:")) != -1) {
+  while ((i = getopt (argc, argv, ":hVa:cdD:ef:G:HpP:qrs:S:tuU:wE:")) != -1) {
     switch (i) {
       case 'h':		/* -h ==> print usage message */
 	fprintf (stderr, usage, program, GOODGAME, USLEEP, prog, VERSION);
@@ -205,7 +212,7 @@ main (int argc, char *argv[])
 	break;
 
       case 'c':		/* -c ==> Will use trap arrows! */
-	cheat = true;
+	creative = true;
 	break;
 
       case 'd':		/* -d ==> player uses UTC date and time sub-directory under rogomatic directory path */
@@ -249,6 +256,10 @@ main (int argc, char *argv[])
 
       case 'P':		/* -P player ==> change the path of player */
 	pfilearg = optarg;
+	break;
+
+      case 'q':		/* -q ==> quiet mode */
+	quiet = true;
 	break;
 
       case 'r':		/* -r ==> Use saved game */
@@ -338,6 +349,14 @@ main (int argc, char *argv[])
   /* skip over command line options */
   argv += optind;
   argc -= optind;
+
+  /*
+   * quiet mode implies no human user is watching, nor interacting with rogomatic
+   */
+  if (quiet) {
+    noterm = true;
+    user = false;
+  }
 
   /*
    * set ROGOSEED environment variable
@@ -496,8 +515,9 @@ main (int argc, char *argv[])
   /*
    * setup values that will be used as arguments to player
    */
-  snprintf (options, MU_BUF, "%d,%d,%d,%d,%d,%d,%d,%u,%ld,%ld",
-            cheat, noterm, echo, nohalf, emacs, terse, user, dnum, goodgame, usleep_usec);
+  snprintf (options, MU_BUF, "%d,%d,%d,%d,%d,%d,%d,%u,%ld,%ld,%d",
+            creative, noterm, echo, nohalf, emacs, terse, user, dnum, goodgame, usleep_usec,
+	    (quiet ? 1 : 0));
   snprintf (roguename, MU_BUF, "Rog-O-Matic %s for %s", RGMVER, getname ());
   /* NOTE: The rogue save, rogue score, and rogue lock files are NOT subject to the -d (UTC date and time sub-dir) */
   snprintf (ropts, SM_BUF, "%s,%s,%s,%s,%s,%s,inven=%s,name=%s,fruit=%s,file=%s/%s,score=%s/%s,lock=%s/%s",

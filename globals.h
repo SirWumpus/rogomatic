@@ -73,7 +73,7 @@ extern int beingstalked;	/* Invisible stalker strategies */
 extern bool blinded;		/* True if blinded */
 extern int blindir;		/* Last direction we moved when blind */
 extern int cancelled;		/* Turns till use cancellation again */
-extern bool cheat;		/* True ==> cheat to win */
+extern bool creative;		/* True ==> use creative strategies */
 extern bool checkrange;		/* True ==> check range */
 extern bool chicken;		/* True ==> test run away code */
 extern bool compression;	/* True ==> move multiple squares */
@@ -137,6 +137,7 @@ extern bool playing;		/* True if still playing the game */
 extern bool poorarrow;		/* True if arrow has missed */
 extern bool protected;		/* True if we protected our armor */
 extern int putonseeinv;		/* Turn when last put on see inv ring */
+extern bool quiet;		/* True ==> quiet mode */
 extern bool redhands;		/* True if our hands are red */
 extern bool replaying;		/* True if replaying old game */
 extern bool revvideo;		/* True if in rev. video mode */

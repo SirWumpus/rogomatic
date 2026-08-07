@@ -152,7 +152,9 @@ terpmes (void)
       clrtoeol ();
       mess[MU_BUF] = 0; /* paranoia */
       printw (">%-*.*s", C-1, C-1, (char *)mess);
-      refresh ();
+      if (!quiet) {
+	refresh ();
+      }
     }
 
     /* :ANT: */
@@ -170,7 +172,9 @@ terpmes (void)
       clrtoeol ();
       mess[MU_BUF] = 0; /* paranoia */
       printw ("<%-*.*s", C-1, C-1, (char *)mess);
-      refresh ();
+      if (!quiet) {
+	refresh ();
+      }
     }
 
     /* :ANT: */
@@ -229,6 +233,7 @@ parsemsg (char *mess, char *mend)
           { arrowshot = true; nametrap(ARROW,HERE); }
         else if (MATCH("an arrow trap*")) nametrap (ARROW,NEAR);
         else if (MATCH("a beartrap*")) nametrap (BEARTRP,NEAR);
+        else if (MATCH("a bear trap*")) nametrap (BEARTRP,NEAR);
         else if (MATCH("a strange white mist *")) nametrap (GASTRAP,HERE);
         else if (MATCH("a sleeping gas trap*")) nametrap (GASTRAP,NEAR);
         else if (MATCH("a small dart *")) nametrap (DARTRAP,HERE);
@@ -844,7 +849,9 @@ readident (char *name)
   clrtoeol ();
   memset (&(screen[0]), ' ', sizeof(screen[0]));
   at (row, col);
-  refresh ();
+  if (!quiet) {
+    refresh ();
+  }
 
   if (version < RV53A) {	/* Rogue 3.6, Rogue 5.2 */
     deleteinv (OBJECT (afterid));	/* Assume object gone */
@@ -1056,8 +1063,8 @@ killed (char *monster)
   /* Tell the user what we killed */
   dwait (D_BATTLE | D_MONSTER, __func__, "Killed: %s", monster);
 
-  /* If cheating against Rogue 3.6, check out our arrow */
-  if (version < RV52A && cheat) {
+  /* If creative against Rogue 3.6, check out our arrow */
+  if (version < RV52A && creative) {
     if (usingarrow && hitstokill > 1 && !beingstalked && goodarrow < R-4) {
       saynow ("Oops, bad arrow...");
       newweapon = badarrow = true; remember (currentweapon, WORTHLESS);

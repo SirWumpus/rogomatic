@@ -195,7 +195,9 @@ dwait(int msgtype, const char *from, char *f, ...)
 
   /* Debugging loop, accept debugging commands from user */
   while (1) {
-    refresh ();
+    if (!quiet) {
+      refresh ();
+    }
 
     switch (fgetc (stdin)) {
       case '?':

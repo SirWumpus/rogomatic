@@ -1282,7 +1282,7 @@ findsafe(void)
 static int
 avoid (void)
 {
-  if (cheat && !foundarrowtrap && !usingarrow) return (0);
+  if (creative && !foundarrowtrap && !usingarrow) return (0);
   else if (Level < 5) return (0);       /* Don't bother */
   else return (2);                      /* Avoid a little */
 }

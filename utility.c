@@ -58,6 +58,7 @@ static void  (*tstat)(int) = NULL;
 static bool final_newline = false;	/* True is endwin_and_ncurses_cleanup() has been called */
 
 extern unsigned int dnum;	/* rogue dungeon number */
+extern bool quiet;		/* True ==> quiet mode */
 
 /*
  * rogo_baudrate: Determine the baud rate of the terminal
@@ -159,8 +160,8 @@ filelength (char *f)
 /*
  * ncurses_delete - free up ncurses state space
  */
-static void
-ncurses_delete(void)
+void
+ncurses_delete (void)
 {
     delwin (stdscr);
     delwin (curscr);
@@ -182,22 +183,27 @@ endwin_and_ncurses_cleanup (void)
    * ncurses cleanup unless endwin() was already called
    */
   if (stdscr != NULL && !isendwin ()) {
-  /*
-   * move to corner of window
-   */
+
+    /*
+     * move to corner of window
+     */
     mvcur (0, C-1, R-1, 0);
 
-  /*
-   * turn on echo and turn off raw
-   */
-    (void) echo ();
-    (void) noraw ();
+    /*
+     * turn on echo and turn off raw
+     */
+    if (!quiet) {
+      echo ();		/* turn on input echo mode */
+      nocbreak ();	/* turn off cbreak mode - input processing only after newline */
+    }
 
-  /*
-   * clean up and delete curses
-   */
-    (void) endwin ();
-    ncurses_delete ();
+    /*
+     * clean up and delete curses
+     */
+    if (!quiet) {
+      endwin ();	/* end curses terminal processing */
+    }
+    ncurses_delete ();	/* free up ncurses state space */
   }
 
   /*
@@ -212,7 +218,7 @@ endwin_and_ncurses_cleanup (void)
     *	     a result of a signal handler, or both.  As a result we have
     *	     to guard against multiple calls to this function.
     */
-  if (!final_newline) {
+  if (!final_newline && !quiet) {
     putchar ('\n');
   }
   final_newline = true;

@@ -238,7 +238,7 @@ nametrap (int traptype, int standingonit)
   }
 
   if (valrc (r,c)) {
-    /* Record last arror trap found (for cheating against 3.6) */
+    /* Record last arror trap found (for being creative against 3.6) */
     if (traptype == ARROW) { foundarrowtrap = true; trapr = r; trapc = c; }
     else if (traptype == TRAPDOR) { foundtrapdoor = true; }
 
@@ -910,7 +910,9 @@ printexplored (void)
 
   clrtoeol ();
   at (row, col);
-  refresh ();
+  if (!quiet) {
+    refresh ();
+  }
 }
 
 /*

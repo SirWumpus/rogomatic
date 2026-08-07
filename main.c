@@ -27,10 +27,10 @@
  *              II.   Andrew Appel & Guy Jacobson, 1/82  [added search]
  *              III.  Michael Mauldin, 3/82              [added termcap]
  *              IV.   Michael Mauldin, 3/82              [searching]
- *              V.    Michael Mauldin, 4/82              [cheat mode]
+ *              V.    Michael Mauldin, 4/82              [creative mode]
  *              VI.   Michael Mauldin, 4/82              [object database]
  *              VII.  All three, 5/82                    [running away]
- *              VIII. Michael Mauldin, 9/82              [improved cheating]
+ *              VIII. Michael Mauldin, 9/82              [improved creativity]
  *              IX.   Michael Mauldin, 10/82             [replaced termcap]
  *              X.    Mauldin, Hamey,  11/82             [Fixes, Rogue 5.2]
  *              XI.   Mauldin,  11/82                    [Fixes, Score lock]
@@ -163,7 +163,7 @@ int beingstalked = 0;		/* Invisible stalker strategies */
 bool blinded = false;		/* True if blinded */
 int blindir = 0;		/* Last direction we moved when blind */
 int cancelled = 0;		/* Turns till use cancellation again */
-bool cheat = false;		/* True ==> cheat, use bugs, etc. */
+bool creative = false;		/* True ==> creative mode, use bugs, etc. */
 bool checkrange = false;	/* True ==> check range */
 bool chicken = false;		/* True ==> check run away code */
 bool compression = true;	/* True ==> move more than one square/turn */
@@ -368,6 +368,9 @@ char *gamename = "Rog-O-Matic";
 /* Used by onintr() to restart Rgm at top of command loop */
 jmp_buf  commandtop;
 
+/* quiet mode */
+bool quiet = false;             /* True ==> quiet mode */
+
 /* static storage */
 static char genelock[TY_BUF + 1];	/* Gene pool lock file, +1 for paranoia */
 static char genelog[TY_BUF + 1];	/* Genetic learning log file, +1 for paranoia */
@@ -482,33 +485,44 @@ main (int argc, char *argv[])
 
   /* The third argument is an option list */
   if (argc > 3) {
-      int cheat_int;		/* integer form of cheat boolean */
+      int creative_int;		/* integer form of creative boolean */
       int noterm_int;		/* integer form of noterm boolean */
       int startecho_int;	/* integer form of startecho boolean */
       int nohalf_int;		/* integer form of nohalf boolean */
       int emacs_int;		/* integer form of emacs boolean */
       int terse_int;		/* integer form of terse boolean */
       int transparent_int;	/* integer form of transparent boolean */
+      int quiet_int;		/* integer form of quiet boolean */
 
       /* parse options in third argument */
-      i = sscanf (argv[3], "%d,%d,%d,%d,%d,%d,%d,%u,%ld,%ld",
-                            &cheat_int, &noterm_int, &startecho_int, &nohalf_int,
-                            &emacs_int, &terse_int, &transparent_int, &dnum, &goodgame, &usleep_usec);
-      if (i != 10) {
+      i = sscanf (argv[3], "%d,%d,%d,%d,%d,%d,%d,%u,%ld,%ld,%d",
+                            &creative_int, &noterm_int, &startecho_int, &nohalf_int,
+                            &emacs_int, &terse_int, &transparent_int, &dnum, &goodgame,
+			    &usleep_usec, &quiet_int);
+      if (i != 11) {
 	  fprintf (stderr, "ERROR: %s: file: %s line: %d dungeon: %u argv[3]: %s "
-		           "failed to scanf 10 flags or values, returned: %d\n",
+		           "failed to scanf 11 flags or values, returned: %d\n",
 			   __func__, __FILE__, __LINE__, dnum, argv[3], i);
 	  exit(1);
       }
 
       /* convert ints to booleans */
-      cheat = (cheat_int == 0) ? false : true;
+      creative = (creative_int == 0) ? false : true;
       noterm = (noterm_int == 0) ? false : true;
       startecho = (startecho_int == 0) ? false : true;
       nohalf = (nohalf_int == 0) ? false : true;
       emacs = (emacs_int == 0) ? false : true;
       terse = (terse_int == 0) ? false : true;
       transparent = (transparent_int == 0) ? false : true;
+      quiet = (quiet_int == 0) ? false : true;
+  }
+
+  /*
+   * quiet mode implies no human user is watching, nor interacting with rogomatic
+   */
+  if (quiet) {
+    noterm = true;
+    transparent = false;
   }
 
   /* The fourth argument is the Rogue name */
@@ -618,6 +632,7 @@ main (int argc, char *argv[])
   else {
     int frogue_fd = argv[1][0] - 'a';
     int trogue_fd = argv[1][1] - 'a';
+
     open_frogue_fd (frogue_fd);
     open_frogue_debuglog (rgmdir, "debuglog.frogue");
     trogue = fdopen (trogue_fd, "w");
@@ -656,7 +671,17 @@ main (int argc, char *argv[])
     freopen ("/dev/null", "w", stdout);
   }
 
-  initscr (); crmode (); noecho ();	/* Initialize the Curses package */
+  /*
+   * setup curses
+   */
+  if (quiet) {
+    filter();
+  }
+  initscr (); /* Initialize the Curses package */
+  if (!quiet) {
+    cbreak ();	/* turn on cbreak mode - immediate input processing w/o a newline */
+    noecho ();	/* turn off input echo mode */
+  }
 
   /* if needed, start logging to the rogomatic game log */
   if (startecho) {
@@ -682,12 +707,19 @@ main (int argc, char *argv[])
     snprintf (msg, SM_BUF, " %s: version %s, genotype %d.",
 	     roguename, versionstr, geneid);
 
-  if (emacs)
-    { fprintf (realstdout, "%s  (%%b)", msg); fflush (realstdout); }
-  else if (terse)
-    { fprintf (realstdout, "%s\n", msg); fflush (realstdout); }
-  else
-    { saynow ("%s", msg); }
+  if (emacs) {
+    if (!quiet) {
+      fprintf (realstdout, "%s  (%%b)", msg);
+      fflush (realstdout);
+    }
+  } else if (terse) {
+    if (!quiet) {
+      fprintf (realstdout, "%s\n", msg);
+      fflush (realstdout);
+    }
+  } else {
+    saynow ("%s", msg);
+  }
 
   /*
    * Now that we have the version figured out, we can properly
@@ -751,7 +783,9 @@ main (int argc, char *argv[])
   }
 
   while (playing) {
-    refresh ();
+    if (!quiet) {
+      refresh ();
+    }
 
     /* If we have any commands to send, send them */
     while (resend ()) {
@@ -780,15 +814,26 @@ main (int argc, char *argv[])
     if ((transparent && !singlestep) ||
         (!emacs && charsavail ()) ||
         !strategize()) {
-      ch = (noterm) ? ROGQUIT : getch ();
+
+      if (noterm) {
+	ch = ROGQUIT;
+      } else {
+	ch = getch ();
+      }
 
       switch (ch) {
         case '?': givehelp (); break;
 
-        case '\n': if (terse)
-            { printsnap (realstdout); fflush (realstdout); }
-          else
-            { singlestep = true; transparent = true; }
+        case '\n':
+	  if (terse) {
+	    if (!quiet) {
+	      printsnap (realstdout);
+	      fflush (realstdout);
+	    }
+	   } else {
+	     singlestep = true;
+	     transparent = true;
+	   }
 
           break;
 
@@ -839,7 +884,12 @@ main (int argc, char *argv[])
                               "%d: Sr %d Dr %d Re %d Ar %d Ex %d Rn %d Wk %d Fd %d, %d/%d",
                               geneid, k_srch, k_door, k_rest, k_arch,
                               k_exper, k_run, k_wake, k_food, genebest, geneavg);
-          clrtoeol (); at (row, col); refresh (); break;
+          clrtoeol ();
+	  at (row, col);
+	  if (!quiet) {
+	    refresh ();
+	  }
+	  break;
 
         case ':': chicken = !chicken;
           say (chicken ? "chicken" : "aggressive");
@@ -862,7 +912,9 @@ main (int argc, char *argv[])
                   "goodarrow", goodarrow);
           clrtoeol ();
           at (row, col);
-          refresh ();
+	  if (!quiet) {
+	    refresh ();
+	  }
           break;
 
 	case '-': saynow ("%s", statusline ());
@@ -887,8 +939,8 @@ main (int argc, char *argv[])
 
         case '(': clear (); dumpdatabase (); pauserogue (); break;
 
-        case 'c': cheat = !cheat;
-          say (cheat ? "cheating" : "righteous");
+        case 'c': creative = !creative;
+          say (creative ? "creative" : "boring");
           break;
 
         case 'd': toggledebug ();	break;
@@ -979,7 +1031,9 @@ main (int argc, char *argv[])
   /* Print termination messages */
   at (R-1, 0);
   clrtoeol ();
-  refresh ();
+  if (!quiet) {
+    refresh ();
+  }
 
   /*
    * Give the user a brief period of time to see the termination messages from rogue
@@ -996,27 +1050,32 @@ main (int argc, char *argv[])
   /*
    * restore the normal (non-ncurses) terminal state
    */
-  nocrmode ();
-  noraw ();
-  echo ();
-  endwin ();
+  if (!quiet) {
+    echo ();		/* turn on input echo mode */
+    nocbreak ();	/* turn off cbreak mode - input processing only after newline */
+    endwin ();		/* end curses terminal processing */
+  }
+  ncurses_delete ();	/* free up ncurses state space */
   restore_termattr (NULL);
 
-  if (emacs) {
-    if (*sumline) fprintf (realstdout, " %s", sumline);
-  }
-  else if (terse) {
-    if (*sumline) fprintf (realstdout, "\n%s\n",sumline);
+  if (!quiet) {
+    if (emacs) {
+      if (*sumline) {
+	fprintf (realstdout, " %s", sumline);
+      }
+    } else if (terse) {
+      if (*sumline) {
+	fprintf (realstdout, "\n%s\n",sumline);
+      }
+      fprintf (realstdout, "\n%s %s est.\n", gamename, termination);
+    } else {
+      putchar ('\n');
+      printf ("%s%s", "Date        Time     User           Gold Killed by",
+	      "         Lvl  Hp  Str  Ac  Exp        Game Dungeon\n");
+      if (*sumline) printf ("%s\n",sumline);
 
-    fprintf (realstdout, "\n%s %s est.\n", gamename, termination);
-  }
-  else {
-    putchar ('\n');
-    printf ("%s%s", "Date        Time     User           Gold Killed by",
-	    "         Lvl  Hp  Str  Ac  Exp        Game Dungeon\n");
-    if (*sumline) printf ("%s\n",sumline);
-
-    printf ("\n%s %s est.\n", gamename, termination);
+      printf ("\n%s %s est.\n", gamename, termination);
+    }
   }
 
   /*
@@ -1079,10 +1138,12 @@ main (int argc, char *argv[])
     /* Rename the rogomatic game log file to a good game file */
     if (link (gamelog_path, lognam) == 0) {
       unlink (gamelog_path);
-      printf ("Log file left on %s\n", lognam);
-    }
-    else
+      if (!quiet) {
+	printf ("Log file left on %s\n", lognam);
+      }
+    } else if (!quiet) {
       printf ("Log file left on %s\n", gamelog_path);
+    }
 
     /*
      * free logname storage
@@ -1109,7 +1170,9 @@ static void
 onintr (int sig)
 {
   sendnow ("n\033");            /* Tell Rogue we don't want to quit */
-  refresh ();                   /* Clear terminal output */
+  if (!quiet) {
+    refresh ();                 /* Clear terminal output */
+  }
   clearsendqueue ();            /* Clear command queue */
   setnewgoal ();                /* Don't believe ex */
   transparent = true;           /* Drop into transprent mode */

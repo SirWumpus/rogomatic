@@ -44,6 +44,8 @@
 # define NOTTRIED     (11)
 # define TARGET       (10)
 
+# define if_mvdir(r,c) (valrc((r), (c)) ? mvdir[r][c] : 0)
+
 /* static declarations */
 
 static int moveavd[R][C + 1]; /* +1 for paranoia */
@@ -134,30 +136,22 @@ followmap (int movetype)
   int dir, dr, dc, r, c;
   int timemode, searchit, count=1;
 
-  dir=mvdir[atrow][atcol]-FROM; dr=deltr[dir]; dc=deltc[dir];
-
-  if (dir > 7 || dir < 0) {
-    if (dir < 0) {
-      dwait (D_ERROR, __func__, "invalid direction < 0: %d atr: %d atc: %d",
-                   dir, atrow, atcol);
-      return (0);			      /* Something Broke */
-    }
-    else if (dir >= TARGET) {
-      dir = dir - TARGET;
-      if (dir > 7) {
-        dwait (D_ERROR, __func__, "invalid adj direction > 7: %d atr: %d atc: %d",
-                   dir, atrow, atcol);
-        return (0);			      /* Something Broke still */
-      }
-    }
+  dir = if_mvdir(atrow, atcol) - FROM;
+  if (dir >= TARGET) {
+    dir = dir - TARGET;
   }
+  if (!valdir(dir)) {
+    return (0);				    /* broken direction */
+  }
+  dr = deltr[dir];
+  dc = deltc[dir];
 
   r=atrow+dr; c=atcol+dc;		/* Save next square in registers */
 
   /* If exploring and are moving to a new hall square, use fmove */
   if (movetype == EXPLORE &&
-      onrc (HALL|BEEN, targetrow, targetcol) != (HALL|BEEN) &&
-      onrc (HALL,r,c) &&
+      if_onrc (HALL|BEEN, targetrow, targetcol) != (HALL|BEEN) &&
+      if_onrc (HALL,r,c) &&
       !beingstalked)			/* Feb 10, 1985 - mlm */
     { fmove (dir); return (1); }
 
@@ -181,23 +175,26 @@ followmap (int movetype)
 
   /* Can we move more than one square at a time? Dont count scare monsters! */
   if (compression) {
-    while (mvdir[r][c]-FROM==dir &&
-           (onrc (SAFE|SCAREM, r+=dr, c+=dc) == SAFE || !searchit))
+    while ((if_mvdir(r,c)-FROM) == dir &&
+           (if_onrc (SAFE|SCAREM, r+=dr, c+=dc) == SAFE || !searchit)) {
       count++;
+    }
   }
 
   /* Maybe search unsafe square before moving onto it */
-  if (timemode != T_RUNNING && !onrc (SAFE, atrow+dr, atcol+dc) &&
-      timessearched[atrow+dr][atcol+dc] < searchit)
-    { command (T_SEARCHING, "s"); return (1); }
+  if (valrc(atrow+dr, atcol+dc)) {
+    if (timemode != T_RUNNING && !onrc (SAFE, atrow+dr, atcol+dc) &&
+	timessearched[atrow+dr][atcol+dc] < searchit)
+      { command (T_SEARCHING, "s"); return (1); }
+  }
 
   /* Maybe take armor off before stepping on rust trap */
-  if (timemode != T_RUNNING && onrc (WATERAP, atrow+dr, atcol+dc) &&
+  if (timemode != T_RUNNING && if_onrc (WATERAP, atrow+dr, atcol+dc) &&
       currentarmor != NONE && willrust (currentarmor) && takeoff ())
     { rmove (1, dir, timemode); return (1); }
 
   /* If we are about to step onto a scare monster scroll, use the 'm' cmd */
-  if (version >= RV53A && onrc (SCAREM, atrow+dr, atcol+dc))
+  if (version >= RV53A && if_onrc (SCAREM, atrow+dr, atcol+dc))
     { mmove (dir, timemode); return (1); }
 
   /* Send the movement command and return success */
@@ -225,7 +222,7 @@ validatemap (int movetype, int (*evalinit)(void), int (*evaluate)(int, int, int,
     return (0);
   }
 
-  thedir = mvdir[atrow][atcol] - FROM;
+  thedir = if_mvdir(atrow,atcol) - FROM;
 
   if (thedir > 7 || thedir < 0) {
     dwait (D_SEARCH, __func__, "direction in map invalid");
@@ -252,18 +249,21 @@ validatemap (int movetype, int (*evalinit)(void), int (*evaluate)(int, int, int,
   while (1) {
     val = avd = cont = 0;
 
-    if (!(*evaluate)(r, c, movedepth[r][c], &val, &avd, &cont)) {
+    if (valrc(r, c) &&
+	(!(*evaluate)(r, c, movedepth[r][c], &val, &avd, &cont))) {
       dwait (D_SEARCH, __func__, "evaluate failed");
       return (0);
     }
 
-    if (!onrc (CANGO, r, c) ||
-        avd!=moveavd[r][c] || val!=moveval[r][c] || cont!=movecont[r][c]) {
+    if (valrc(r, c) &&
+	(!onrc (CANGO, r, c) ||
+         avd!=moveavd[r][c] || val!=moveval[r][c] || cont!=movecont[r][c])) {
       dwait (D_SEARCH, __func__, "map invalidated");
       return (0);
     }
 
-    if ((dir=mvdir[r][c]-FROM) == TARGET) {
+    dir = if_mvdir(r, c) - FROM;
+    if (dir == TARGET) {
       dwait (D_SEARCH, __func__, "existing map validated");
       break;
     }

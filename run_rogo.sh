@@ -32,7 +32,7 @@
 
 # setup
 #
-export VERSION="1.4.5 2026-07-22"
+export VERSION="1.4.6 2026-07-31"
 NAME=$(basename "$0")
 export NAME
 #
@@ -71,6 +71,7 @@ export CAP_U_FLAG=
 export D_FLAG=
 export E_FLAG=
 export CAP_Z_FLAG=
+export QUIET_MODE=
 
 
 # NOTE: The following RGMDIR is NOT the default for rogomatic (/var/tmp/rogomatic)
@@ -102,15 +103,15 @@ function find_progs
     # verify that the run_rogo tool is executable
     #
     if [[ ! -e $RUN_ROGO_TOOL ]]; then
-	echo  "$0: Warning: run_rogo does not exist: $RUN_ROGO_TOOL" 1>&2
+	echo "$0: Warning: run_rogo does not exist: $RUN_ROGO_TOOL" 1>&2
 	return 1
     fi
     if [[ ! -f $RUN_ROGO_TOOL ]]; then
-	echo  "$0: Warning: run_rogo is not a regular file: $RUN_ROGO_TOOL" 1>&2
+	echo "$0: Warning: run_rogo is not a regular file: $RUN_ROGO_TOOL" 1>&2
 	return 1
     fi
     if [[ ! -x $RUN_ROGO_TOOL ]]; then
-	echo  "$0: Warning: run_rogo is not an executable file: $RUN_ROGO_TOOL" 1>&2
+	echo "$0: Warning: run_rogo is not an executable file: $RUN_ROGO_TOOL" 1>&2
 	return 1
     fi
 
@@ -126,15 +127,15 @@ function find_progs
     # verify that the rogomatic tool is executable
     #
     if [[ ! -e $ROGOMATIC_TOOL ]]; then
-	echo  "$0: Warning: rogomatic does not exist: $ROGOMATIC_TOOL" 1>&2
+	echo "$0: Warning: rogomatic does not exist: $ROGOMATIC_TOOL" 1>&2
 	return 1
     fi
     if [[ ! -f $ROGOMATIC_TOOL ]]; then
-	echo  "$0: Warning: rogomatic is not a regular file: $ROGOMATIC_TOOL" 1>&2
+	echo "$0: Warning: rogomatic is not a regular file: $ROGOMATIC_TOOL" 1>&2
 	return 1
     fi
     if [[ ! -x $ROGOMATIC_TOOL ]]; then
-	echo  "$0: Warning: rogomatic is not an executable file: $ROGOMATIC_TOOL" 1>&2
+	echo "$0: Warning: rogomatic is not an executable file: $ROGOMATIC_TOOL" 1>&2
 	return 1
     fi
 
@@ -150,15 +151,15 @@ function find_progs
     # verify that the player tool is executable
     #
     if [[ ! -e $PLAYER_TOOL ]]; then
-	echo  "$0: Warning: player does not exist: $PLAYER_TOOL" 1>&2
+	echo "$0: Warning: player does not exist: $PLAYER_TOOL" 1>&2
 	return 1
     fi
     if [[ ! -f $PLAYER_TOOL ]]; then
-	echo  "$0: Warning: player is not a regular file: $PLAYER_TOOL" 1>&2
+	echo "$0: Warning: player is not a regular file: $PLAYER_TOOL" 1>&2
 	return 1
     fi
     if [[ ! -x $PLAYER_TOOL ]]; then
-	echo  "$0: Warning: player is not an executable file: $PLAYER_TOOL" 1>&2
+	echo "$0: Warning: player is not an executable file: $PLAYER_TOOL" 1>&2
 	return 1
     fi
 
@@ -176,15 +177,15 @@ function find_progs
     # verify that the rogomatic tool is executable
     #
     if [[ ! -e $ROGUE_TOOL ]]; then
-	echo  "$0: Warning: rogue does not exist: $ROGUE_TOOL" 1>&2
+	echo "$0: Warning: rogue does not exist: $ROGUE_TOOL" 1>&2
 	return 1
     fi
     if [[ ! -f $ROGUE_TOOL ]]; then
-	echo  "$0: Warning: rogue is not a regular file: $ROGUE_TOOL" 1>&2
+	echo "$0: Warning: rogue is not a regular file: $ROGUE_TOOL" 1>&2
 	return 1
     fi
     if [[ ! -x $ROGUE_TOOL ]]; then
-	echo  "$0: Warning: rogue is not an executable file: $ROGUE_TOOL" 1>&2
+	echo "$0: Warning: rogue is not an executable file: $ROGUE_TOOL" 1>&2
 	return 1
     fi
 
@@ -223,6 +224,9 @@ function find_progs
     if [[ -n $E_FLAG ]]; then
 	OPTION+=("-e")		# turn OFF rogomatic game logging
     fi
+    if [[ -n $QUIET_MODE ]]; then
+	OPTION+=("-q")		# turn on quiet mode
+    fi
 
     # found everything
     #
@@ -235,7 +239,7 @@ function find_progs
 export USAGE="usage: $0
         [-h] [-v level] [-V] [-n] [-N]
         [-a secs] [-d] [-D rgmdir] [-e] [-f rogue] [-G goodlvl] [-H]
-        [-P player] [-r rogomatic] [-S seed] [-U usec] [-Z]
+        [-P player] [-q] [-r rogomatic] [-S seed] [-U usec] [-Z]
 
     -h          print help message and exit
     -v level    set verbosity level (def level: $V_FLAG)
@@ -253,6 +257,7 @@ export USAGE="usage: $0
     -H                  disable the so-called rogomatic halftime show (def: show it)
 
     -P player           path to player (def: $PLAYER_TOOL)
+    -q                  quiet mode: do not output rogue game play (def: do)
     -r rogomatic        path to rogomatic (def: $ROGOMATIC_TOOL)
     -S seed             set rogomatic seed (def: use a random seed)
     -U usec             set the sleep time between actions to usec microseconds (def: $USLEEP)
@@ -264,7 +269,6 @@ Exit codes:
      1         player already running
      2         -h and help string printed or -V and version string printed
      3         command line error
-     5         some internal tool is not found or not an executable file
      6         problems found with or in the rogomatic directory
      7         rogomatic returned an error
  >= 10         internal error
@@ -274,7 +278,7 @@ $NAME version: $VERSION"
 
 # parse command line
 #
-while getopts :hv:VnNa:dD:ef:G:HP:r:S:U:Z flag; do
+while getopts :hv:VnNa:dD:ef:G:HP:qr:S:U:Z flag; do
   case "$flag" in
     h) echo "$USAGE"
 	exit 2
@@ -307,6 +311,9 @@ while getopts :hv:VnNa:dD:ef:G:HP:r:S:U:Z flag; do
 
     P) PLAYER_TOOL="$OPTARG"
         ;;
+    q) QUIET_MODE="-q"
+        ;;
+
     r) ROGOMATIC_TOOL="$OPTARG"
         ;;
     S) SEED="$OPTARG"
@@ -394,7 +401,6 @@ if [[ $V_FLAG -ge 3 ]]; then
     echo "$0: debug[3]: SECS=$SECS" 1>&2
     echo "$0: debug[3]: NOOP=$NOOP" 1>&2
     echo "$0: debug[3]: DO_NOT_PROCESS=$DO_NOT_PROCESS" 1>&2
-    echo "$0: debug[3]: V_FLAG=$V_FLAG" 1>&2
     echo "$0: debug[3]: ROGOMATIC_TOOL=$ROGOMATIC_TOOL" 1>&2
     echo "$0: debug[3]: PLAYER_TOOL=$PLAYER_TOOL" 1>&2
     echo "$0: debug[3]: GOODGAME=$GOODGAME" 1>&2
@@ -407,6 +413,7 @@ if [[ $V_FLAG -ge 3 ]]; then
     echo "$0: debug[3]: CAP_U_FLAG=$CAP_U_FLAG" 1>&2
     echo "$0: debug[3]: D_FLAG=$D_FLAG" 1>&2
     echo "$0: debug[3]: E_FLAG=$E_FLAG" 1>&2
+    echo "$0: debug[3]: QUIET_MODE=$QUIET_MODE" 1>&2
     for index in "${!OPTION[@]}"; do
         echo "$0: debug[$V_FLAG]: OPTION[$index]=${OPTION[$index]}" 1>&2
     done
@@ -432,7 +439,7 @@ if [[ $status -eq 1 ]]; then
     exit 1
 elif [[ $status -ne 0 ]]; then
     echo "$0: ERROR: flock -n -E 1 -o $RGMDIR/player.lck failed, error: $status" 1>&2
-    exit 10
+    exit 1
 fi
 
 

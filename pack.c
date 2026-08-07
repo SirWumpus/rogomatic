@@ -351,7 +351,9 @@ inventory (char *msgstart, char *msgend)
     clrtoeol ();
     printw(">%-*.*s", C-1, C-1, mess);
     at (row, col);
-    refresh ();
+    if (!quiet) {
+      refresh ();
+    }
   }
 
   /* Rip surrounding garbage from the message */
@@ -594,7 +596,9 @@ inventory (char *msgstart, char *msgend)
 
         clrtoeol ();
         at (row, col);
-        refresh ();
+	if (!quiet) {
+	  refresh ();
+	}
         printed++;
       }
     }
@@ -689,7 +693,9 @@ inventory (char *msgstart, char *msgend)
     clrtoeol ();
     printw("<%-*.*s", C-1, C-1, objname);
     at (row, col);
-    refresh ();
+    if (!quiet) {
+      refresh ();
+    }
   }
 
   /* Keep track of whether we are wielding a trap arrow */

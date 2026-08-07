@@ -1,7 +1,7 @@
-.TH ROGOMATIC 6 "2026 Jul 26"
+.TH ROGOMATIC 6 "2026 Aug 03"
 .UC 4
 .SH NAME
-rogomatic, run_rogo, rerun_rogo, end_player, unstuck_player \- Automatically Exploring The Dungeons of Doom
+rogomatic, run_rogo, rerun_rogo, mrerun_rogo, end_player, unstuck_player \- Automatically Exploring The Dungeons of Doom
 .SH SYNOPSIS
 .I rogomatic
 .in +0.5i
@@ -45,6 +45,9 @@ rogomatic, run_rogo, rerun_rogo, end_player, unstuck_player \- Automatically Exp
 ]
 [
 .BI \-P\  player
+]
+[
+.B \-q
 ]
 [
 .B \-r
@@ -221,6 +224,101 @@ rogomatic, run_rogo, rerun_rogo, end_player, unstuck_player \- Automatically Exp
 .BI \-u\  user
 ]
 .PP
+.I mrerun_rogo
+.in +0.5i
+[
+.B \-h
+]
+[
+.B \-V
+]
+[
+.BI \-v\  level
+]
+[
+.B \-n
+]
+[
+.B \-N
+]
+.br
+[
+.BI \-i\  idlesec
+]
+[
+.BI \-o\  unstuck_player
+]
+[
+.BI \-O\  rerun_rogo
+]
+[
+.BI \-R\  run_rogo
+]
+[
+.BI \-s\  stopfile
+]
+.br
+[
+.BI \-a\  secs
+]
+[
+.B \-d
+]
+[
+.BI \-D\  base_rgmdir
+]
+[
+.B \-e
+]
+[
+.BI \-f\  rogue
+]
+[
+.BI \-G\  goodlvl
+]
+[
+.B \-H
+]
+.br
+[
+.BI \-P\  player
+]
+[
+.BI \-r\  rogomatic
+]
+[
+.BI \-S\  ROGOSEED
+]
+[
+.BI \-U\  usec
+]
+[
+.B \-Z
+]
+.in -0.5i
+.PP
+.I end_player
+.in +0.5i
+[
+.B \-h
+]
+[
+.B \-V
+]
+[
+.BI \-v\  level
+]
+[
+.B \-n
+]
+[
+.B \-N
+]
+.br
+[
+.BI \-u\  user
+]
+.PP
 .I unstuck_player
 .in +0.5i
 [
@@ -288,6 +386,9 @@ Should you wish to intervene, type the
 command and
 .B rogomatic
 will enter transparent mode.
+See the
+.B COMMANDS
+section below for details on commands, and on transparent mode.
 .PP
 When
 .B rogomatic
@@ -298,18 +399,18 @@ via the
 program, it sets the
 .B ROGUEOPTS
 environment variable to a value such that the
-rogue player name used will start with
-.BR rogo\- ,
-and set the rogue score path to
-.BR @RMGDIR@/rogue.scr ,
+rogue name used will start with
+.BR rogo\- .
+The rogue score path to
+.BR @RGMDIR@/rogue.scr ,
 which is
 .B NOT
 the default rogue score file.
 Thus by default,
 .B rogomatic
-game stats will not compete with the humans.
-.B COMMANDS
-section below for details on commands, and on transparent mode.
+game stats will not compete with the humans who are playing
+.BR rogue (6)
+in the default way.
 .SH OPTIONS
 .TP
 .B \-h
@@ -357,20 +458,37 @@ attempts to read from
 a timeout alarm will be set.
 If the read hangs for more than \fIsecs\fP seconds, a
 .B SIGARLM
-signal will be delivered to the player process.
+signal will be delivered to the player program.
 The
 .B SIGARLM
 is then caught and a
 .BR siglongjmp (3)
-performed a non-local jump to a control point where player process
+performed a non-local jump to a control point where player program
 is much more likely to resume normal operation.
 Nevertheless, there are circumstances where non-local jump still hangs.
 .sp
 See the section on \fBBUGS\fP below for more information on hanging.
 .TP
 .B \-c
-Turns on cheat mode
-and use use trap arrows.
+Turn on "\fIcreative mode\fP".
+.sp
+In "\fIcreative mode\fP", a number of strategies are employed,
+many of which are used by wide variety of human players,
+such as using trap arrows.
+.sp
+Unfortunately a number of these "\fIcreative mode\fP strategies mostly
+work on very old version of
+.BR rogue (6)
+that are no longer supported.
+.sp
+Historically, this mode was called "cheat mode" even though
+the same strategies were used by wide variety of human players.
+.sp
+When using with
+.BR rogue (6)
+with \fBrogue version 5.4.5\fP or later,
+the "\fIcreative mode\fP" is enabled by default.
+.sp
 See also the
 .B c
 command in the in transparent mode in the
@@ -402,7 +520,7 @@ creates a new rogomatic sub-directory, using a UTC date and time, of the form:
 where
 .I YYYYMMDD_HHMMSS
 is the year, month, day, hour, minute and second, in the UTC timezone,
-of when player command started.
+of when player program started.
 .sp
 Because
 .B \-d
@@ -506,8 +624,7 @@ listed, and the version number
 printed must be either "3.6," "5.2," "5.3", "5.4", or "5.4.5".
 .sp
 .BR IMPORTANT\ NOTE :
-Only
-.B rogue version 5.4.5
+Only \fBrogue version 5.4.5\fP
 as found in the GitHub repo:
 .sp
 .in +0.5i
@@ -515,11 +632,10 @@ as found in the GitHub repo:
 .in -0.5i
 .sp
 has been tested with this version of
-.B rogomatic
-While other versions of rogue may work, only
-.B rogue version 5.4.5
+.BR rogomatic (6).
+While other versions of rogue may work, only \fBrogue version 5.4.5\fP
 with a minimum date of
-.BR 2026-07-18
+.B 2026-08-03
 is supported.
 .TP
 .BI \-G\  goodlvl
@@ -590,7 +706,50 @@ the replay file will be
 .IR r_file .
 .TP
 .BI \-P\  player
-Set the path to player.
+Set the path to the player program.
+.TP
+.B \-q
+Set \fBquiet mode\fP, and disable
+.BR ncurses (3X)
+output.
+.sp
+By default, output from
+.RB rogue (6),
+along with additional messages from the
+.B player
+process are written to standard output so
+that a human may watch the game as it is played.
+The use of
+.B \-q
+will silence nearly all output, allowing in theory,
+the game to be played faster.
+.sp
+When quite mode, all file logging continues as normal.
+One may wish to tail a log file such as
+.BR total.lvllog ,
+or even the more verbose
+.BR gamelog
+to track progress.
+Such files are under the rogomatic directory.
+When using the
+.BR tail (1)
+utility, one would use both the \fB\-f\fP, and the \fB\-F\fP command line options:
+.sp
+.in +0.5i
+\fBtail \-f \-F \fP\fIRGMDIR\fP\fB/total.lvllog\fP
+.in -0.5i
+.sp
+where \fIRGMDIR\fP is the rogomatic directory
+(such as \fB@RGMDIR@\fP or \fB/var/tmp/rogo\fP or \fB/var/tmp/mrogo/rogo.\fP\fInumber\fP).
+.sp
+The use of
+.B \-q
+overrides and disables any use of user mode (disables \fB\-u\fP),
+and use of watched mode (disables \fB\-w\fP).
+.sp
+See the
+.B FILES
+section for more details on log files.
 .TP
 .B \-r
 Restore a saved rogue game.
@@ -636,6 +795,8 @@ This tells
 to start up in transparent mode, so the user can type commands before
 .B rogomatic
 starts exploring level 1.
+.sp
+The use of \fB\-q\fP disables user mode, and overrides this flag.
 .TP
 .BI \-U\  usec
 Set the sleep time between actions to
@@ -644,7 +805,7 @@ microseconds.
 .sp
 Between writes to
 .BR rogue (6)
-the player process will sleep
+the player program will sleep
 .I usec
 microseconds.
 This has the effect of slowing down the actions on the screen to be somewhat viewable by humans.
@@ -659,6 +820,8 @@ microseconds.
 .TP
 .B \-w
 Start up in watched mode.
+.sp
+The use of \fB\-q\fP disables watch mode, and overrides this flag.
 .TP
 .B \-s\  [\ \fIrogue_ver\fP\ ]
 Print the \fBrogomatic scoreboard\fP, reverse sorted by the ending gold amount,
@@ -876,6 +1039,41 @@ See the section on \fBBUGS\fP below for more information on hanging.
 .sp
 See \fBrerun_rogo -h\fP for usage details.
 .TP
+.B mrerun_rogo
+The
+.B mrerun_rogo
+command is a very useful to run multiple instances of the
+.B rerun_rogo
+command.
+.sp
+The
+.B mrerun_rogo
+command will establish a rogomatic directory of the form:
+.sp
+.in +0.5i
+.B /var/tmp/mrogo/rogo.ID
+.in -0.5i
+.sp
+where \fIID\fP is the argument supplied to the
+.B rerun_rogo
+command.
+.sp
+An instance of the
+.B unstuck_player
+utility with
+.BI \-D\  /var/tmp/mrogo/rogo.ID
+being set.
+.sp
+Then the
+.B mrerun_rogo
+command will be run with the same
+.BI \-D\  /var/tmp/mrogo/rogo.ID
+being set.
+.sp
+Any other options, except
+.BI \-O\  rerun_rogo
+will be passed down to the subsequent utilities as needed.
+.TP
 .B end_player
 The
 .B end_player
@@ -909,13 +1107,13 @@ The
 .B unstuck_player
 command attempt to detect if a
 .BR rogue (6)
-process is stalled by observing that the process isn't accumulating CPU time
+program is stalled by observing that the process isn't accumulating CPU time
 by checking the output of a
 .BR ps (1)
 command.
 The common reason for a stalled
 .BR rogue (6)
-process is that
+program is that
 .BR rogomatic (6)
 has hung.
 .sp
@@ -929,12 +1127,12 @@ We recommended that a minor level of verbosity be used with this tool, as in:
 .sp
 When a
 .BR rogue (6)
-process has not accumulated CPU time after a period of time
+program has not accumulated CPU time after a period of time
 (default: after 16 seconds), a
 .B SIGHUP
 signal is set to the
 .BR rogue (6)
-process.
+program.
 .sp
 See
 .B end_player
@@ -942,17 +1140,17 @@ above for what happens when a
 .B SIGHUP
 signal is set to the
 .BR rogue (6)
-process.
+program.
 .sp
 If a
 .B SIGHUP
 signal cannot be delivered to a
 .BR rogue (6)
-process, say because no such process is found, then a
+program, say because no such program is found, then a
 .B SIGHUP
 signal is set to the
 .B player
-process.
+program.
 .sp
 See \fBunstuck_player -h\fP for usage details.
 .PP
@@ -1062,28 +1260,25 @@ environment variable.
 The game may be restarted later.
 .TP
 .B c
-.I Cheat,
+.IR creative\ mode ,
 tells
 .B rogomatic
 to take advantage of idiosyncrasies in the
 .B rogue
 game to get a higher score.
-This is unfortunately necessary to allow fair
-competition with other human top ten players who take advantage of the same
-bugs.
 .sp
 Note that this option should only be used on very old 3.6 version
 .BR rogue ,
 since the VMS version does not exhibit the same bugs.
-When playing against
-.B rogue
-version 5.2 and later, no cheating is done, since the bugs are not widely known and used by
-human competition.
+.sp
+The strategies enabled by
+.I creative\ mode
+are known and used by a fair number of human players.
 .TP
 .B d
 .I Debugging,
 toggles the debugging flag, which is useless to non-wizard
-players (although it is entertaining if your terminal has reverse video).
+users (although it is entertaining if your terminal has reverse video).
 .TP
 .B e
 .I Toggle\ game\ logging.
@@ -1332,7 +1527,7 @@ is created and used in sub-directory of the form:
 where
 .I YYYYMMDD_HHMMSS
 is the year, month, day, hour, minute and second, in the UTC timezone,
-of when player command started.
+of when player program started.
 .TP
 .B debuglog.frogue
 This file:
@@ -1365,7 +1560,7 @@ records tokens (output) written to the current
 .BR rogue (6)
 process.
 .sp
-The player process when starting, will create this file if it does not exist,
+The player program when starting, will create this file if it does not exist,
 or truncate it to zero size otherwise.
 Thus, this file only holds data about the most recent run.
 .TP
@@ -1377,7 +1572,7 @@ Output written to standard error (stderr) is appended to:
 .BI @RGMDIR@/errlog
 .in -0.5i
 .sp
-If this file does not exist, it is created, otherwise it is appended to by the player process.
+If this file does not exist, it is created, otherwise it is appended to by the player program.
 Thus, this file may contain data about previous runs.
 .TP
 .B error5.4.5
@@ -1394,7 +1589,7 @@ is the
 version number, such as
 .IR 5.4.5 .
 .sp
-If this file does not exist, it is created, otherwise it is appended to by the player process.
+If this file does not exist, it is created, otherwise it is appended to by the player program.
 Thus, this file may contain data about previous runs.
 .TP
 .B gamelog
@@ -1437,7 +1632,7 @@ in the
 .B OPTIONS
 section for information on what constitutes a "\fBgood game\fP".
 .sp
-The player process when starting, will create this file if it does not exist,
+The player program when starting, will create this file if it does not exist,
 or truncate it to zero size otherwise.
 Thus, if this file exists, only holds data about the most recent run
 if the run wasn't a "\fBgood game\fP".
@@ -1463,7 +1658,7 @@ This file is locked via the
 .BR flock (2)
 system call.
 .sp
-The player process when starting, will create this file if it does not exist.
+The player program when starting, will create this file if it does not exist.
 This is a zero length file.
 .TP
 .B GeneLog545
@@ -1480,7 +1675,7 @@ is the
 version number, without dots, such as
 .IR 545 .
 .sp
-If this file does not exist, it is created, otherwise it is appended to by the player process.
+If this file does not exist, it is created, otherwise it is appended to by the player program.
 Thus, this file may contain data about previous runs.
 .TP
 .B GenePool545
@@ -1497,7 +1692,7 @@ is the
 version number, without dots, such as
 .IR 545 .
 .sp
-If this file does not exist, it is created, otherwise it is appended to by the player process.
+If this file does not exist, it is created, otherwise it is appended to by the player program.
 Thus, this file may contain data about previous runs.
 .TP
 .B goodgame.YYYYMMDD.HHMMSS.max_level.score.mnst
@@ -1609,7 +1804,7 @@ a string ending in a colon \:
 .RE
 .sp
 .RS
-The player process when starting, will create this file if it does not exist,
+The player program, when starting, will create this file if it does not exist,
 or truncate it to zero size otherwise.
 Thus, this file only holds data about the most recent run.
 .RE
@@ -1649,7 +1844,7 @@ dungeon number
 .RE
 .sp
 .RS
-If this file does not exist, it is created, otherwise it is appended to by the player process.
+If this file does not exist, it is created, otherwise it is appended to by the player program.
 Thus, this file may contain data about previous runs.
 .RE
 .TP
@@ -1680,7 +1875,7 @@ This lock helps prevent more than one
 .BR rogomatic (6)
 from using the same rogomatic directory.
 .sp
-The player process when starting, will create this file if it does not exist.
+The player program, when starting, will create this file if it does not exist.
 This is a zero length file.
 .TP
 .B Rgm.Lock
@@ -1701,7 +1896,7 @@ is locked via the
 .BR flock (2)
 and then is released after the write is complete.
 .sp
-The player process when starting, will create this file if it does not exist.
+The player program, when starting, will create this file if it does not exist.
 This is a zero length file.
 .TP
 .B rgmdelta5.4.5
@@ -1987,7 +2182,7 @@ so you might wish to clean out old rogomatic sub-directories
 from time to time by doing:
 .sp
 .in +0.5i
-.B rm -rf /var/tmp/rogomatic/20*
+.B rm -rf /var/tmp/rogomatic/2*
 .in -0.5i
 .sp
 Using the

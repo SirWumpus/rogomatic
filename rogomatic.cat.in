@@ -1,13 +1,51 @@
 [4mROGOMATIC[24m(6)                      Games Manual                      [4mROGOMATIC[24m(6)
 
 [1mNAME[0m
-     rogomatic,  rgmgene, rgmhist, rgmscatter - Automatically Exploring The Dun-
-     geons of Doom
+     rogomatic,  run_rogo, rerun_rogo, mrerun_rogo, end_player, unstuck_player -
+     Automatically Exploring The Dungeons of Doom
 
 [1mSYNOPSIS[0m
-     [4mrogomatic[24m [ [1m-h [22m] [ [1m-V [22m] [ [1m-c [22m] [ [1m-d [22m] [ [1m-D [4m[22mrgmdir[24m ] [ [1m-e [22m] [ [1m-f [4m[22mrogue[24m  ]  [
-     [1m-H  [22m]  [ [1m-p [4m[22mroguelog[24m ] [ [1m-r [22m] [ [1m-s [22m] [ [1m-S [4m[22mROGOSEED[24m ] [ [1m-t [22m] [ [1m-u [22m] [ [1m-w [22m] [
-     [1m-E [22m] [ [4mfile[24m ]
+     [4mrogomatic[0m
+          [ [1m-h [22m] [ [1m-V [22m]
+          [ [1m-a [4m[22msecs[24m ] [ [1m-c [22m] [ [1m-d [22m] [ [1m-D [4m[22mrgmdir[24m ] [ [1m-e [22m] [ [1m-E [22m] [ [1m-f [4m[22mrogue[24m  ]  [
+          [1m-G [4m[22mgoodlvl[24m ]
+          [  [1m-H [22m] [ [1m-p [22m] [ [1m-P [4m[22mplayer[24m ] [ [1m-q [22m] [ [1m-r [22m] [ [1m-S [4m[22mROGOSEED[24m ] [ [1m-t [22m] [ [1m-u[0m
+          ] [ [1m-U [4m[22musec[24m ] [ [1m-w [22m]
+          [ [1m-s [22m[ [4mrogue_ver[24m ] | [4mr_file[24m ]
+
+     [4mrun_rogo[0m
+          [ [1m-h [22m] [ [1m-V [22m] [ [1m-v [4m[22mlevel[24m ] [ [1m-n [22m] [ [1m-N [22m]
+          [ [1m-a [4m[22msecs[24m ] [ [1m-d [22m] [ [1m-D [4m[22mrgmdir[24m ] [ [1m-e [22m] [ [1m-f [4m[22mrogue[24m ] [ [1m-G [4m[22mgoodlvl[24m ]  [
+          [1m-H [22m]
+          [ [1m-P [4m[22mplayer[24m ] [ [1m-r [4m[22mrogomatic[24m ] [ [1m-S [4m[22mROGOSEED[24m ] [ [1m-U [4m[22musec[24m ] [ [1m-Z [22m]
+
+     [4mrerun_rogo[0m
+          [ [1m-h [22m] [ [1m-V [22m] [ [1m-v [4m[22mlevel[24m ] [ [1m-n [22m] [ [1m-N [22m]
+          [ [1m-i [4m[22midlesec[24m ] [ [1m-R [4m[22mrun_rogo[24m ] [ [1m-s [4m[22mstopfile[24m ]
+          [  [1m-a [4m[22msecs[24m ] [ [1m-d [22m] [ [1m-D [4m[22mrgmdir[24m ] [ [1m-e [22m] [ [1m-f [4m[22mrogue[24m ] [ [1m-G [4m[22mgoodlvl[24m ] [
+          [1m-H [22m]
+          [ [1m-P [4m[22mplayer[24m ] [ [1m-r [4m[22mrogomatic[24m ] [ [1m-S [4m[22mROGOSEED[24m ] [ [1m-U [4m[22musec[24m ] [ [1m-Z [22m]
+
+     [4mend_player[0m
+          [ [1m-h [22m] [ [1m-V [22m] [ [1m-v [4m[22mlevel[24m ] [ [1m-n [22m] [ [1m-N [22m]
+          [ [1m-u [4m[22muser[24m ]
+
+     [4mmrerun_rogo[0m
+          [ [1m-h [22m] [ [1m-V [22m] [ [1m-v [4m[22mlevel[24m ] [ [1m-n [22m] [ [1m-N [22m]
+          [ [1m-i [4m[22midlesec[24m ] [ [1m-o [4m[22munstuck_player[24m ] [ [1m-O [4m[22mrerun_rogo[24m ] [ [1m-R [4m[22mrun_rogo[24m ]
+          [ [1m-s [4m[22mstopfile[24m ]
+          [ [1m-a [4m[22msecs[24m ] [ [1m-d [22m] [ [1m-D [4m[22mbase_rgmdir[24m ] [ [1m-e [22m] [ [1m-f [4m[22mrogue[24m ] [ [1m-G [4m[22mgoodlvl[0m
+          ] [ [1m-H [22m]
+          [ [1m-P [4m[22mplayer[24m ] [ [1m-r [4m[22mrogomatic[24m ] [ [1m-S [4m[22mROGOSEED[24m ] [ [1m-U [4m[22musec[24m ] [ [1m-Z [22m]
+
+     [4mend_player[0m
+          [ [1m-h [22m] [ [1m-V [22m] [ [1m-v [4m[22mlevel[24m ] [ [1m-n [22m] [ [1m-N [22m]
+          [ [1m-u [4m[22muser[24m ]
+
+     [4munstuck_player[0m
+          [ [1m-h [22m] [ [1m-V [22m] [ [1m-v [4m[22mlevel[24m ] [ [1m-n [22m] [ [1m-N [22m]
+          [ [1m-D [4m[22mrgmdir[24m ] [ [1m-m [4m[22mmissing_sec[24m ] [ [1m-r [4m[22mrecheck_sec[24m ]
+          [ [1m-R [4m[22mrestart_sec[24m ] [ [1m-u [4m[22muser[24m ] [ [1m-z [4m[22mloop_sec[24m ] [ [4munstuck.log[24m ]
 
 [1mDESCRIPTION[0m
      [4mRog-O-Matic[24m (hereafter referred to as [1mrogomatic[22m) is a computer fantasy game
@@ -16,41 +54,87 @@
      get  a  lot  of gold, rather than having to actually type the required com-
      mands yourself.
 
-     The [1mrogomatic [22mplays the game of [1mrogue [22mon your behalf while you watch.
+     The [1mrogomatic [22mplays the game of [1mrogue[22m(6) on your behalf while you watch.
 
      Once you have entered the world of [1mrogomatic [22myou will stay there, passively
      watching the game unfold before you much like a catatonic teenager watching
      television.  Should you wish to intervene, type the [1mt [22mcommand and [1mrogomatic[0m
-     will enter transparent mode.
-
-     When  [1mrogomatic  [22mlaunches  [1mrogue  [22mvia  the  [1mplayer  [22mprogram,  it  sets  the
-     [1m$ROGUEOPTS [22menvironment to a value such that the rogue player name used will
-     start with [1mrogo-[22m, and set the rogue score path to [1m@RMGDIR@/rogue.scr[22m, which
-     is [1mNOT [22mthe default rogue score file.  Thus by default, [1mrogomatic [22mgame stats
-     will  not  compete  with the humans.  [1mCOMMANDS [22msection below for details on
+     will enter transparent mode.  See the [1mCOMMANDS [22msection below for details on
      commands, and on transparent mode.
+
+     When [1mrogomatic [22mlaunches [1mrogue[22m(6)  via  the  [1mplayer  [22mprogram,  it  sets  the
+     [1mROGUEOPTS  [22menvironment  variable  to  a value such that the rogue name used
+     will start with [1mrogo-[22m.  The rogue score path to  [1m@RGMDIR@/rogue.scr[22m,  which
+     is [1mNOT [22mthe default rogue score file.  Thus by default, [1mrogomatic [22mgame stats
+     will  not  compete  with the humans who are playing [1mrogue[22m(6) in the default
+     way.
 
 [1mOPTIONS[0m
      [1m-h     [22mPrint the usage message, and exit with a status of [1m2[22m.
 
      [1m-V     [22mPrint the [1mrogomatic [22mversion string and exit with a status of [1m2[22m.
 
-     [1m-c     [22mTurns on cheat mode and use use trap arrows.  See also the [1mc [22mcommand
-            in the in transparent mode in the [1mCOMMANDS [22msection below.
+     [1m-a [4m[22msecs[0m
+            Set the timeout timer to [1msecs [22mseconds, and set the  [4mROGOTIMER[24m  envi-
+            ronment variable to [1msecs[22m.
+
+            The  [1msecs  [22mmust  be  a  value >= 0, and it may an integer, or a real
+            value (i.e., 4.5).  By default, [1msecs [22mis set to [1m0.0[22m,  which  has  the
+            effect of not setting a timeout timer.
+
+            For example, using [1m-a [4m[22m4.5[24m on the command line will cause the program
+            attempt to resume normal operation after a hang while reading a mes-
+            sage from [1mrogue[22m(6).
+
+            Before  [1mrogomatic[22m(6) attempts to read from [1mrogue[22m(6), a timeout alarm
+            will be set.  If the read  hangs  for  more  than  [4msecs[24m  seconds,  a
+            [1mSIGARLM [22msignal will be delivered to the player program.  The [1mSIGARLM[0m
+            is  then  caught and a [1msiglongjmp[22m(3) performed a non-local jump to a
+            control point where player program is much  more  likely  to  resume
+            normal  operation.  Nevertheless, there are circumstances where non-
+            local jump still hangs.
+
+            See the section on [1mBUGS [22mbelow for more information on hanging.
+
+     [1m-c     [22mTurn on "[4mcreative[24m [4mmode[24m".
+
+            In "[4mcreative[24m [4mmode[24m", a number of strategies  are  employed,  many  of
+            which  are used by wide variety of human players, such as using trap
+            arrows.
+
+            Unfortunately a number of these  "[4mcreative[24m  [4mmode[24m  strategies  mostly
+            work on very old version of [1mrogue[22m(6) that are no longer supported.
+
+            Historically, this mode was called "cheat mode" even though the same
+            strategies were used by wide variety of human players.
+
+            When  using  with  [1mrogue[22m(6)  with  [1mrogue version 5.4.5 [22mor later, the
+            "[4mcreative[24m [4mmode[24m" is enabled by default.
+
+            See also the [1mc [22mcommand in the in transparent mode  in  the  [1mCOMMANDS[0m
+            section below.
 
      [1m-d     [22mUse a UTC date and time sub-directory under rogomatic directory path
             to store files.
 
-            By default, [1mrogomatic [22mcreates and uses files under:
+            By default, [1mrogomatic [22mcreates the rogomatic directory:
 
                  [4m@RGMDIR@[0m
 
-            The [1m-d [22mcommand line option will creates and uses files under:
+            With the [1m-d [22moption, [1mrogomatic [22mcreates a new rogomatic sub-directory,
+            using a UTC date and time, of the form:
 
                  [1m@RGMDIR@[4m[22m/YYYYMMDD_HHMMSS[0m
 
             where [4mYYYYMMDD_HHMMSS[24m is the year, month, day, hour, minute and sec-
-            ond, in the UTC timezone, of when player command started.
+            ond, in the UTC timezone, of when player program started.
+
+            Because  [1m-d  [22mcreates  a new rogomatic sub-directory, the environment
+            starts out in an initial state.  This will make is easier to  use  a
+            debugger  such as [1mlldb[22m(1), especially when combined with [1m-S [4m[22mROGOSEED[0m
+            making the action much more deterministic from  a  debugging  stand-
+            point.   See  the [1mDEBUGGING [22msection near the bottom of this man page
+            for more details.
 
      [1m-D [4m[22mrgmdir[0m
             Change the rogomatic directory path to [4mrgmdir[24m.
@@ -60,17 +144,40 @@
 
                  [4mrgmdir[24m/YYYYMMDD_HHMMSS
 
-     [1m-e     [22mTurns on logging.  See also the [1me [22mcommand in transparent mode.
+     [1m-e     [22mTurn [1mOFF [22mrogomatic game logging.
+
+            By  default, rogomatic game logging is enabled, and the [4mgamelog[24m file
+            is written to:
+
+                 [1m@RGMDIR@[4m[22m/gamelog[0m
+
+            [1mNOTE[22m: Prior to version 14.2.6, this command line  option  turned  on
+            rogomatic  game logging.  Now that rogomatic game logging is enabled
+            by default, and the [1m-e [22mdisables rogomatic game logging.
+
+            See also the [1me [22mcommand in transparent mode.
+
+     [1m-E     [22mStart up in emacs mode.
 
      [1m-f [4m[22mrogue[0m
-            Set the path of [1mrogue[22m.
+            Set the path of [1mrogue[22m, overriding the default.
 
-            By  default, [1mrogomatic [22mfirst looks for [1m./rogue [22min the current direc-
-            tory before looking for [1mrogue [22min the default  installation  location
+            By default, [1mrogomatic [22mfirst looks for:
+
+                 [1m./rogue[0m
+
+            in the current directory, then it looks for:
+
+                 [1m../rogue5.4/rogue[0m
+
+            before looking for [1mrogue (6) [22min the  default  installation  location
             of: [1m@BINDIR@/rogue[22m.
 
-            The [1mrogomatic [22mcommand might be able to  play with versions 3.6, 5.2,
-            5.3, 5.4, 5.4.4, and 5.4.5.
+            [1mIMPORTANT NOTE[22m:  The  [1m$PATH [22menvironment variable is [1mNOT [22mused to find
+            [1mrogue (6).  [22mTherefore, the [4mrogue[24m argument needs to be a path.
+
+            The [1mrogomatic[22m(6) command might be able to  play with  versions  3.6,
+            5.2, 5.3, 5.4, 5.4.4, and 5.4.5.
 
             You  can  run [1mrogomatic [22mon modified rogues using this option, but be
             warned that the interface must be completely compatible with one  of
@@ -82,8 +189,28 @@
 
                  [4mhttps://github.com/lcn2/rogue5.4[0m
 
-            has  been tested with this version of [1mrogomatic [22mWhile other versions
-            of rogue may work, only [1mrogue version 5.4.5 [22mis now supported.
+            has been tested with this version of [1mrogomatic[22m(6).  While other ver-
+            sions  of  rogue  may  work, only [1mrogue version 5.4.5 [22mwith a minimum
+            date of [1m2026-08-03 [22mis supported.
+
+     [1m-G [4m[22mgoodlvl[0m
+            Set the "[1mgood game[22m" level to [4mgoodlvl[24m.
+
+            A "[1mgood game[22m" is when the rogue reaches a dungeon level of at  least
+            [4mgoodlvl[24m.   When  a  rogue has the [4mAmulet[24m [4mof[24m [4mYendor[24m at the end of the
+            game, then the game is also considered a "[1mgood game[22m".
+
+            By default, [4mgoodlvl[24m level is [1m@GOODGAME@[22m.
+
+            When a "[1mgood game[22m" exits, the rogomatic game log file:
+
+                 [1m@RGMDIR@[4m[22m/gamelog[0m
+
+            is preserved by renaming it to a file of the form:
+
+                 [1m@RGMDIR@[4m[22m/goodgame.YYYYMMDD.HHMMSS.max_level.score.mnst[0m
+
+            See the [1mFILES [22msection below for details on the goodname file form.
 
      [1m-H     [22mDisable the so-called rogomatic "[4mhalftime[24m [4mshow[24m".
 
@@ -95,65 +222,319 @@
             Historically,  this  option was [1m-h[22m, however recently that option be-
             came the "help option", and so it was named as [1m-H[22m.
 
-     [1m-p [4m[22mroguelog[0m
-            Replay the [4mroguelog[24m rogue log file.
+     [1m-p     [22mReplay the rogomatic game log file.
 
-            The default rogue log file is:
+            The default rogomatic game log file is:
 
-                 [1m@RGMDIR@[4m[22m/roguelog[0m
+                 [1m@RGMDIR@[4m[22m/gamelog[0m
+
+            When combined with a final [4mr_file[24m command line argument, the  replay
+            file will be [4mr_file[24m.
+
+     [1m-P [4m[22mplayer[0m
+            Set the path to the player program.
+
+     [1m-q     [22mSet [1mquiet mode[22m, and disable [1mncurses[22m(3X) output.
+
+            By  default,  output  from  rogue[1m(6), [22malong with additional messages
+            from the [1mplayer [22mprocess are written to standard output so that a hu-
+            man may watch the game as it is played.  The use of [1m-q [22mwill  silence
+            nearly all output, allowing in theory, the game to be played faster.
+
+            When quite mode, all file logging continues as normal.  One may wish
+            to  tail  a  log file such as [1mtotal.lvllog[22m, or even the more verbose
+            [1mgamelog [22mto track progress.  Such files are under the  rogomatic  di-
+            rectory.  When using the [1mtail[22m(1) utility, one would use both the [1m-f[22m,
+            and the [1m-F [22mcommand line options:
+
+                 [1mtail -f -F [4m[22mRGMDIR[24m[1m/total.lvllog[0m
+
+            where  [4mRGMDIR[24m  is  the  rogomatic  directory  (such  as  [1m@RGMDIR@ [22mor
+            [1m/var/tmp/rogo [22mor [1m/var/tmp/mrogo/rogo.[4m[22mnumber[24m).
+
+            The use of [1m-q [22moverrides and disables any use of user mode  (disables
+            [1m-u[22m), and use of watched mode (disables [1m-w[22m).
+
+            See the [1mFILES [22msection for more details on log files.
 
      [1m-r     [22mRestore a saved rogue game.
 
-            Without a final  [4mfile[24m  command  line  option,  run  [1mrogue  [22mwith  the
+            Without  a  final  [4mr_file[24m  command  line  option, run [1mrogue [22mwith the
             [1m-r [22m@RGMDIR@/rogue.sav command line option and restore the rogue game
             stored in that file.
 
-            If  a  final  [4mfile[24m  command line option is given, run [1mrogue [22mwith the
-            [1m-r [4m[22mfile[24m command line option to the rogue game stored [4mfile[24m.
+            If a final [4mr_file[24m command line argument is given, run [1mrogue[22m(6)  will
+            be  run  with  [1m-r [4m[22mr_file[24m  so  that  rogue game will be restored from
+            [4mr_file[24m.
 
-     [1m-s     [22mPrint the [1mrogomatic [22mscoreboard.
+     [1m-S [4m[22mROGOSEED[0m
+            Seed  the  pseudo-random  number  generator  to  [4mROGOSEED[24m  for  both
+            [1mrogue[22m(6) and rogomatic.
 
-            The default rogomatic scoreboard is:
+            When  combined with [1m-d [22mthis creates much more deterministic run from
+            a debugging standpoint.
 
-                 [1m@RGMDIR@/rgmscore[4m[22mversion[0m
-
-            where [4mversion[24m is the [1mrogue [22mversion number, such as [4m5.4.5[24m.
-
-            If a final [4mfile[24m command line option is  given,  then  the  rogomatic
-            scoreboard printed will be from:
-
-                 [1mfile[4m[22mversion[0m
-
-            where [4mversion[24m is the [1mrogue [22mversion number, such as [4m5.4.5[24m.
-
-     [1m-t     [22mTerse  mode.  In terse mode, [1mrogomatic [22mwill only print a summary af-
+     [1m-t     [22mTerse mode.  In terse mode, [1mrogomatic [22mwill only print a summary  af-
             ter each level explored.
 
-     [1m-u     [22mStart up in user mode.  This tells [1mrogomatic [22mto start up  in  trans-
-            parent  mode,  so the user can type commands before [1mrogomatic [22mstarts
+     [1m-u     [22mStart  up  in user mode.  This tells [1mrogomatic [22mto start up in trans-
+            parent mode, so the user can type commands before  [1mrogomatic  [22mstarts
             exploring level 1.
+
+            The use of [1m-q [22mdisables user mode, and overrides this flag.
+
+     [1m-U [4m[22musec[0m
+            Set the sleep time between actions to [4musec[24m microseconds.
+
+            Between  writes  to  [1mrogue[22m(6) the player program will sleep [4musec[24m mi-
+            croseconds.  This has the effect of slowing down the actions on  the
+            screen to be somewhat viewable by humans.
+
+            To have no such delays, use [1m-H -U 0 [22mon the command line.
+
+            By default, [4musec[24m is set to [1m@USLEEP@ [22mmicroseconds.
 
      [1m-w     [22mStart up in watched mode.
 
-     [1m-E     [22mStart up in emacs mode.
+            The use of [1m-q [22mdisables watch mode, and overrides this flag.
+
+     [1m-s  [ [4m[22mrogue_ver[24m [1m][0m
+            Print  the  [1mrogomatic  scoreboard[22m, reverse sorted by the ending gold
+            amount, of the rogomatic game results.
+
+            The [1mrogomatic scoreboard [22mis printed with the following fields:
+
+
+                   1. Year
+                        End of game 4-digit year (YYYY), in the local timezone
+
+                   2. Month
+                        End of game 3-letter month (Mon), in the local timezone
+
+                   3. Day
+                        End of game 2-digit day (01-31), in the local timezone
+
+                   4. Time
+                        End of game time of day (24-hour HH:MM:SS format, in the
+                        local timezone
+
+                   5. User
+                        rogue username that will start with rogo-.
+
+                   6. Gold
+                        End of game gold that will include the 10% penalty  when
+                        killed, or payment for inventory items if a total winner
+
+                   7. Killed by
+                        Cause of death, or "total winner
+
+                   8. Level
+                        The deepest dungeon level reached
+
+                   9. HpEnd of game points
+
+                   10. Str
+                        End of game strength
+
+                   11. Ac
+                        End of game armor class that was being worn
+
+                   12. Level/Exp
+                        End  of  game  experience level followed by / experience
+                        points
+
+                   13. Game number
+                        The logged game number, starting with 0
+
+                   14. Dungeon
+                        The rogue dungeon number
+
+            The default [1mrogue_ver [22mis [1m5.4.5[22m.
+
+            The default rogomatic scoreboard is:
+
+                 [1m@RGMDIR@/rgmscore[4m[22m5.4.5[0m
+
+            If [1m-s [4m[22mrogue_ver[24m is given, then the rogomatic scoreboard printed will
+            be from:
+
+                 [1m@RGMDIR@/rgmscore[4m[22mrogue_ver[0m
+
+            where [1mrogue_ver [22mis the [1mrogue [22mversion number, such as [4m5.4.5[24m.
+
+            If a rogomatic delta file is found:
+
+                 [1m@RGMDIR@/rgmdelta[4m[22mrogue_ver[0m
+
+            The rogomatic delta is merged into  the  rogomatic  scoreboard,  and
+            then the rogomatic delta file is removed.
+
+            If just the [1m-s [22mcommand line option is used, then the [1m-s [22mcommand line
+            option  [1mMUST BE THE LAST OPTION ON THE COMMAND LINE[22m,  and  cannot be
+            used in conjunction with a final [4mr_file[24m.
+
+     [ [4mr_file[24m ]
+            When used with [1m-p[22m, [4mr_file[24m specifies the  rogomatic  game  to  replay
+            from.
+
+            When used with [1m-r[22m, [4mr_file[24m specifies the rogue game to restore from.
+
+            Use of [4mr_file[24m is [1mNOT [22mcompatible with using [1m-s [22mby itself.
+
+[1mUSEFUL UTILITIES[0m
+     Several useful utilities are installed under the [1m@BINDIR@ [22mdirectory, or may
+     be run from top of the source code directory.
+
+     [1mrun_rogo[0m
+            The  [1mrun_rogo  [22mcommand  is a very useful way to run [1mrogomatic[22m(6) and
+            set the rogomatic directory to:
+
+                 [1m/var/tmp/rogo[0m
+
+            instead of the usual default rogomatic directory.  By  changing  the
+            rogomatic  directory  to  a  non-default value, manual runs of [1mrogo-[0m
+            [1mmatic[22m(6) will not interfere (such a lock file contention).
+
+            In addition, the [1mrun_rogo [22mcommand will first look in the  local  di-
+            rectory for commands, and use them if found, otherwise it search and
+            use commands along the [1m$PATH [22menvironment variable path.
+
+            See [1mrun_rogo -h [22mfor usage details.
+
+     [1mrerun_rogo[0m
+            The [1mrerun_rogo [22mcommand is a very useful to run [1mrogomatic[22m(6) multiple
+            times  in a row.  Currently, when the rogue dies in the dungeon, [1mro-[0m
+            [1mgomatic[22m(6) exits.  When run with [1mrerun_rogo [22ma new [1mrogomatic[22m(6)  will
+            be started after the previous [1mrogomatic[22m(6) exits.
+
+            The  [1mrerun_rogo  [22muses  the [1mrun_rogo [22mcommand to run [1mrogomatic[22m(6).  As
+            such, the rogomatic directory will be set to:
+
+                 [1m/var/tmp/rogo[0m
+
+            If the file [1m.stopfile [22mis created in the  rogomatic  directory  while
+            [1mrerun_rogo [22mis running, then the next time [1mrogue[22m(6) exits, the [1m.stop-[0m
+            [1mfile  [22mfile  is  removed, and rerun cycle will be stopped.  This is a
+            graceful way to end the rerun cycle.
+
+            Because  [1mrerun_rogo  [22mchanges  the  default  rogomatic  directory  to
+            [1m/var/tmp/rogo[22m,  the default way to top the rerun cycle is to use the
+            command:
+
+                 [1mtouch /var/tmp/rogo/.stopfile[0m
+
+            Changing the rogomatic  directory  by  supplying  [1m-D [4m[22mrgmdir[24m  implies
+            [1m-s [4m[22mrgmdir/.stopfile[24m as well.
+
+            To  deal  with the possibility of [1mrogomatic[22m(6) hanging, and to speed
+            up the automated game play, we recommend [1mNO [22mrelay between writes  to
+            [1mrogue[22m(6), as well as a timeout timer:
+
+                 [1mrerun_rogo -H -U 0 -a 4.5[0m
+
+            To  deal  with the possibility of [1mrogomatic[22m(6) hanging, we recommend
+            running [1munstuck_player [22min a separate window while running this tool:
+
+                 [1munstuck_player -v 1[0m
+
+            See the section on [1mBUGS [22mbelow for more information on hanging.
+
+            See [1mrerun_rogo -h [22mfor usage details.
+
+     [1mmrerun_rogo[0m
+            The [1mmrerun_rogo [22mcommand is a very useful to run  multiple  instances
+            of the [1mrerun_rogo [22mcommand.
+
+            The  [1mmrerun_rogo [22mcommand will establish a rogomatic directory of the
+            form:
+
+                 [1m/var/tmp/mrogo/rogo.ID[0m
+
+            where [4mID[24m is the argument supplied to the [1mrerun_rogo [22mcommand.
+
+            An    instance    of     the     [1munstuck_player     [22mutility     with
+            [1m-D [4m[22m/var/tmp/mrogo/rogo.ID[24m being set.
+
+            Then   the   [1mmrerun_rogo   [22mcommand   will   be  run  with  the  same
+            [1m-D [4m[22m/var/tmp/mrogo/rogo.ID[24m being set.
+
+            Any other options, except [1m-O [4m[22mrerun_rogo[24m will be passed down  to  the
+            subsequent utilities as needed.
+
+     [1mend_player[0m
+            The  [1mend_player  [22mcommand  will  attempt  to  end  a [1mrogomatic[22m(6) and
+            [1mrogue[22m(6) run.
+
+            It will first attempt to send a [1mSIGHUP [22msignal to [1mrogue[22m(6) by way  of
+            the  [1mkillall[22m(1)  command.   This allows [1mrogue[22m(6) to gracefully exit,
+            and potentially record a score in the rogue game file.  The cause of
+            death will be reported as "[4mby[24m  [4msignal[24m".   When  the  happens,  [1mrogo-[0m
+            [1mmatic[22m(6)  will consider the rogue as having undergone a normal death
+            and will update the rogomatic state accordingly.
+
+            See [1mend_player -h [22mfor usage details.
+
+     [1munstuck_player[0m
+            The [1munstuck_player [22mcommand attempt to detect if a  [1mrogue[22m(6)  program
+            is stalled by observing that the process isn't accumulating CPU time
+            by  checking the output of a [1mps[22m(1) command.  The common reason for a
+            stalled [1mrogue[22m(6) program is that [1mrogomatic[22m(6) has hung.
+
+            See the section on [1mBUGS [22mbelow for more information on hanging.
+
+            We recommended that a minor level of verbosity  be  used  with  this
+            tool, as in:
+
+                 [1munstuck_player -v 1[0m
+
+            When  a [1mrogue[22m(6) program has not accumulated CPU time after a period
+            of time (default: after 16 seconds), a [1mSIGHUP [22msignal is set  to  the
+            [1mrogue[22m(6) program.
+
+            See [1mend_player [22mabove for what happens when a [1mSIGHUP [22msignal is set to
+            the [1mrogue[22m(6) program.
+
+            If  a  [1mSIGHUP  [22msignal cannot be delivered to a [1mrogue[22m(6) program, say
+            because no such program is found, then a [1mSIGHUP [22msignal is set to the
+            [1mplayer [22mprogram.
+
+            See [1munstuck_player -h [22mfor usage details.
+
+     The following tools are less well documented and less well supported:
+
+     [1mrgmgene[0m
+            The [1mrgmgene [22mcommand summarizes the current population  in  the  gene
+            pool.
+
+     [1mrgmscatter[0m
+            The  [1mrgmscatter  [22mcommand  prints a scatter plot of all scores in the
+            scorefile.
+
+     [1mrgmhist[0m
+            The [1mrgmhist [22mcommand prints a histogram of score (or levels if the [1m-l[0m
+            option is given).
 
 [1mCOMMANDS[0m
-     The [1mt [22mcommand will cause [1mrogomatic [22mwill enter transparent mode.
+     The following commands may be entered from the keyboard while  [1mrogomatic[22m(6)
+     is running.
 
-     In transparent mode, you can type several  commands,  the  most  useful  of
-     which  is the [1m?  [22mcommand, which prints out the next help line.  Press the [1m?[0m
-     key repeatedly to see all of the help.  Some useful commands are: [1mh j k l H[0m
-     [1mJ K L b n y u f s > < S Q.  [22mThese have the same meaning as in normal [1mrogue[22m.
-     To return to [1mrogomatic [22mmode, type the [1mt [22mcommand again.
-
-     Some useful commands are:
+     Some useful keyboard commands are:
 
      [1mt      [4m[22mToggle,[24m toggles the setting of the [4mtransparent[24m mode flag.  In trans-
-            parent mode, [1mrogomatic [22mwill not automatically attack monsters,  pick
-            up  treasure,  or explore around.  Unfortunately, there is no way to
-            enter complicated commands like [4mquaff[24m or [4mread[24m in  transparent  mode.
+            parent  mode, [1mrogomatic [22mwill not automatically attack monsters, pick
+            up treasure, or explore around.  Unfortunately, there is no  way  to
+            enter  complicated  commands like [4mquaff[24m or [4mread[24m in transparent mode.
             Typing any [1mrogue [22mcommand, or single-step command also enables trans-
             parent mode.
+
+            The [1mt [22mcommand will cause [1mrogomatic [22mwill enter transparent mode.
+
+            In transparent mode, you can type several commands, the most  useful
+            of  which  is  the  [1m?  [22mcommand, which prints out the next help line.
+            Press the [1m?  [22mkey repeatedly to see all of  the  help.   Some  useful
+            commands  are:  [1mh j k l H J K L b n y u f s > < S Q.  [22mThese have the
+            same meaning as in normal [1mrogue[22m.  To return to [1mrogomatic [22mmode,  type
+            the [1mt [22mcommand again.
 
      [1mQ      [4m[22mQuit,[24m  tells [1mrogomatic [22mto quit the game.  The score is logged in the
             score file, and possibly the [1mrogue [22mtop ten, and the game  is  termi-
@@ -163,98 +544,102 @@
             argument to [4mrogomatic[24m or the [4mROGUEOPTS[24m  environment  variable.   The
             game may be restarted later.
 
-     [1mc      [4m[22mCheat,[24m  tells  [1mrogomatic  [22mto take advantage of idiosyncracies in the
-            [1mrogue [22mgame to get a higher score.  This is  unfortunately  necessary
-            to  allow fair competition with other human top ten players who take
-            advantage of the same bugs.
+     [1mc      [4m[22mcreative[24m [4mmode[24m,  tells  [1mrogomatic [22mto take advantage of idiosyncrasies
+            in the [1mrogue [22mgame to get a higher score.
 
             Note that this option should only be used on very  old  3.6  version
-            [1mrogue[22m,  since  the VMS version does not exhibit the same bugs.  When
-            playing against [1mrogue [22mversion 5.2 and later, no  cheating  is  done,
-            since the bugs are not widely known and used by human competition.
+            [1mrogue[22m, since the VMS version does not exhibit the same bugs.
+
+            The strategies enabled by [4mcreative[24m [4mmode[24m are known and used by a fair
+            number of human players.
 
      [1md      [4m[22mDebugging,[24m  toggles the debugging flag, which is useless to non-wiz-
-            ard players (although it is entertaining if your  terminal  has  re-
-            verse video).
+            ard users (although it is entertaining if your terminal has  reverse
+            video).
 
-     [1me      [4m[22mEchoing,[24m causes a copy of the game to be written to file [4mroguelog[24m in
-            the  current directory.  Typing [1me [22ma second time closes the log file.
-            When  the  game  is  ended,  the  roguelog  file   is   renamed   to
-            <killer>.<level>.<score>  so  if  a  troll  killed poor [1mrogomatic [22mon
-            level 14 leaving him with a score of 3088, the file would  be  named
-            [4mtrol.14.3088.[24m   Note  that  only  the  first  four characters of the
-            killer are used.  The [1m-p [22moption will replay a saved game.  Addition-
-            ally, a stop action command (carriage return gives  a  single  step)
-            has been added.
+     [1me      [4m[22mToggle[24m [4mgame[24m [4mlogging.[0m
+
+            By  default rogomatic game logging is enabled (unless the [1m-e [22mcommand
+            line option was used).
+
+            When enable, the rogomatic game log file is:
+
+                 [1m@RGMDIR@[4m[22m/gamelog[0m
+
+            If the rogomatic game logging was enabled the [1me [22mcommand will disable
+            it; otherwise rogomatic game logging will be re-enabled.
+
+            The [1m-p [22moption will replay a saved game.  Additionally, a stop action
+            command (carriage return gives a single step) has been added.
 
      [1mi      [4m[22mInventory,[24m dumps the current inventory on the screen.
 
-     [1mm      [4m[22mMonster[24m  [4mlist,[24m  shows the current long term memory evaluation of the
-            monsters.  [1mrogomatic [22mnows keeps a long term memory  file  (for  each
-            version  of  [1mrogue[22m) in the score directory, and records the meanness
+     [1mm      [4m[22mMonster[24m [4mlist,[24m shows the current long term memory evaluation  of  the
+            monsters.   [1mrogomatic  [22mnows  keeps a long term memory file (for each
+            version of [1mrogue[22m) in the score directory, and records  the  meanness
             of each monster it finds.  This command prints out the letter, name,
-            and strength of each monster.  Strength is listed as three  numbers:
-            expected  damage  (scaled  by  10) and maximum damage (unscaled) are
+            and  strength of each monster.  Strength is listed as three numbers:
+            expected damage (scaled by 10) and  maximum  damage  (unscaled)  are
             shown in parentheses, and the mean number of arrows required to kill
             a monster is shown in square brackets.
 
-     [1mCR     [4m[22mSingle[24m [4mstep,[24m a carriage return enables [4mtransparent[24m mode, and  causes
+     [1mCR     [4m[22mSingle[24m  [4mstep,[24m a carriage return enables [4mtransparent[24m mode, and causes
             [1mrogomatic [22mto single-step.  The command sent is printed at the bottom
             right hand of the screen.
 
      [1m/      [4m[22mSnapshot,[24m a timestamp, the current screen, and the current inventory
             are appended to file [4msnapshot.rgm[24m in the current directory.
 
-     [1m$      [4m[22mWeaponrank,[24m  dumps [1mrogomatic[22m's current estimate of his weapons rank-
+     [1m$      [4m[22mWeaponrank,[24m dumps [1mrogomatic[22m's current estimate of his weapons  rank-
             ings.
 
      [1m%      [4m[22mArmorrank,[24m dumps [1mrogomatic[22m's current estimate of his armor rankings.
 
      [1m=      [4m[22mRingrank,[24m dumps [1mrogomatic[22m's current estimate of his ring rankings.
 
-     [1m-      [4m[22mStatus,[24m prints out a status  line  indicating  various  things  like
-            whether  [1mrogomatic[22m's  is  confused, has red hands, is wearing cursed
-            armor or wielding a cursed weapon,  and  which  monsters  have  been
+     [1m-      [4m[22mStatus,[24m  prints  out  a  status  line indicating various things like
+            whether [1mrogomatic[22m's is confused, has red hands,  is  wearing  cursed
+            armor  or  wielding  a  cursed  weapon, and which monsters have been
             genocided.  It also prints the number of turns elapsed in the game.
 
      [1m`      [4m[22mSummary,[24m a backquote prints a short summary of the game.
 
-     [1m~      [4m[22mVersion,[24m  prints  the version of [1mrogue [22mand [1mrogomatic [22mbeing used.  It
+     [1m~      [4m[22mVersion,[24m prints the version of [1mrogue [22mand [1mrogomatic [22mbeing  used.   It
             also prints the current goal score.
 
-     [1mG      [4m[22mGenotype,[24m displays the settings of the genetically  learned  parame-
+     [1mG      [4m[22mGenotype,[24m  displays  the settings of the genetically learned parame-
             ters of the genotype playing now.  See section [4mGenes[24m for more infor-
             mation about these parameters.
 
-     [1mR      [4m[22mReplay[24m  [4mposition,[24m  allows  you to skip around in a log file when re-
-            playing an old game.  This key must be followed by either [1mf,  p,  c,[0m
-            [1mn,  [22mor  [1ml.  [22mThese indicate you wish to see the [4mfirst,[24m [4mprevious,[24m [4mcur-[0m
-            [4mrent,[24m [4mnext,[24m or [1mlast [22mlevels of the game.  The first  time  you  enter
-            the  [1mR  [22mcommand,  there will be a pause of several seconds while the
+     [1mR      [4m[22mReplay[24m [4mposition,[24m allows you to skip around in a log  file  when  re-
+            playing  an  old game.  This key must be followed by either [1mf, p, c,[0m
+            [1mn, [22mor [1ml.  [22mThese indicate you wish to see the [4mfirst,[24m  [4mprevious,[24m  [4mcur-[0m
+            [4mrent,[24m  [4mnext,[24m  or  [1mlast [22mlevels of the game.  The first time you enter
+            the [1mR [22mcommand, there will be a pause of several  seconds  while  the
             whole log file is digested.  After this initialization, there should
-            be no delay when skipping around in the log file.   After  you  have
+            be  no  delay  when skipping around in the log file.  After you have
             skipped once, the program won't terminate at the end of the file un-
             til you enter the [1mQ [4m[22m(quit)[24m ommand.  This way you can replay the last
             level over (and over...).
 
-     When  the game ends, either by your death, when you quit, or when [1mrogomatic[0m
-     dies horribly of some bug, you will not get a list of the top-ten  scorers.
+     When the game ends, either by your death, when you quit, or when  [1mrogomatic[0m
+     dies  horribly of some bug, you will not get a list of the top-ten scorers.
      The scoring is based entirely upon useless criteria anyway.  [1mrogomatic [22mdoes
-     keep  a list of its games.  To see the best [1mrogomatic [22mgames, use "rogomatic
+     keep a list of its games.  To see the best [1mrogomatic [22mgames, use  "rogomatic
      -s" which dumps the current scores in reverse order.
 
-     For   more   detailed   directions,   as   the   expression   goes:    [1mRTFS[0m
+     For    more   detailed   directions,   as   the   expression   goes:   [1mRTFS[0m
      ([4mhttps://en.wikipedia.org/wiki/RTFS[24m) :-).  See:
 
           [4mhttps://www.github.com/lcn2/rogomatic[0m
 
 [1mGENES[0m
-     The  [1mG [22mcommand lists the current settings for each [1mrogomatic[22m's ``DNA'' set-
+     The [1mG [22mcommand lists the current settings for each [1mrogomatic[22m's ``DNA''  set-
      tings.  These numbers (from 0 to 99) specify some of [1mrogomatic[22m's behaviors.
-     A gene pool file is kept in the score directory that  records  the  current
-     population  of  explorers.  A variant of Holland's ``Genetic Algorithm'' is
-     used to manipulate this gene pool.  The result  is  that  [1mrogomatic  [22mlearns
-     from  his past games how to play better.  The following genes are currently
+     A  gene  pool  file is kept in the score directory that records the current
+     population of explorers.  A variant of Holland's ``Genetic  Algorithm''  is
+     used  to  manipulate  this  gene pool.  The result is that [1mrogomatic [22mlearns
+     from his past games how to play better.  The following genes are  currently
      used:
 
      [1mSr     [22mHow many times to search each square for traps (0 to 4, depending on
@@ -263,14 +648,14 @@
      [1mDr     [22mHow many times to search each square for secret doors (0 to 19, more
             for dead end passages not in mazes).
 
-     [1mRe     [22mHow much to rest up when injured (until 40% to 80% healed, based  on
+     [1mRe     [22mHow  much to rest up when injured (until 40% to 80% healed, based on
             experience level).
 
-     [1mAr     [22mWhen  to  shoot  arrows  at enemies, the higher the number, the more
-            likely [1mrogomatic [22mis to shoot arrows at monsters (both  smaller  mon-
+     [1mAr     [22mWhen to shoot arrows at enemies, the higher  the  number,  the  more
+            likely  [1mrogomatic  [22mis to shoot arrows at monsters (both smaller mon-
             sters, and more arrows).
 
-     [1mEx     [22mHow  soon  to  experiment  with unknown potions and scrolls (between
+     [1mEx     [22mHow soon to experiment with unknown  potions  and  scrolls  (between
             levels 1 and 10).
 
      [1mRn     [22mHow likely he is to run from an opponent (the higher the number, the
@@ -279,83 +664,384 @@
      [1mWk     [22mHow likely he is to wake a sleeping opponent (the higher the number,
             the bigger the monster he will attack, even though it is sleeping).
 
-     [1mFd     [22mHow likely he is to hoard extra food.  This affects how  many  rings
+     [1mFd     [22mHow  likely  he is to hoard extra food.  This affects how many rings
             he wears, and how much he searches for traps.
 
 [1mFILES[0m
-     There  are  two executable files: [1mrogomatic [22mand [1mplayer[22m.  The [1mrogomatic [22mpro-
-     gram is a small program which forks and execs the [1mrogue [22mgame  connected  to
+     There are two executable files: [1mrogomatic [22mand [1mplayer[22m.  The  [1mrogomatic  [22mpro-
+     gram  is  a small program which forks and execs the [1mrogue [22mgame connected to
      the [1mplayer [22mprogram.  You must have access to all of these files.
 
-     These  programs are searched for in the current directory.  If they are not
-     found in the current directory, then, the [1mrogomatic [22mprogram will  look  for
+     These programs are searched for in the current directory.  If they are  not
+     found  in  the current directory, then, the [1mrogomatic [22mprogram will look for
      then under the [1m@BINDIR@ [22mdirectory.
 
      By default, [1mrogomatic [22mcreates [1m@RGMDIR@ [22mknown as the rogomatic directory.
 
-     The  rogomatic  directory may be changed by the command line option [1m-D [22mpath
+     The rogomatic directory may be changed by the command line  option  [1m-D [22mpath
      command line option.
 
-     If the [1m-d [22mcommand line option is used, various  session  related  debugging
-     files are stored in a [1mUTC date and time [22msub-directory of the form:
+     If the [1m-d [22mcommand line option is used, a new rogomatic directory is created
+     and used in sub-directory of the form:
 
           [1m@RGMDIR@[4m[22m/YYYYMMDD_HHMMSS[0m
 
      where  [4mYYYYMMDD_HHMMSS[24m is the year, month, day, hour, minute and second, in
-     the UTC timezone, of when player command started.
+     the UTC timezone, of when player program started.
 
-     The rogomatic score file is kept in:
+     [1mdebuglog.frogue[0m
+            This file:
 
-          [1m@RGMDIR@/rgmscore[4m[22mversion[0m
+                 [1m@RGMDIR@/debuglog.frogue[0m
 
-     where [4mversion[24m is the [1mrogue [22mversion number, such as [4m5.4.5[24m.
+            records the standard  output  (stdout)  from  the  current  [1mrogue[22m(6)
+            process.  When [1mrogomatic[22m(6) starts, this file is truncated to a zero
+            size.
 
-     The rogomatic delta file is:
+            The  player  process when starting, will create this file if it does
+            not exist, or truncate it to zero size otherwise.  Thus,  this  file
+            only holds data about the most recent run.
 
-          [1m@RGMDIR@/rgmdelta[4m[22mversion[0m
+     [1mdebuglog.player[0m
+            When [1mrogomatic[22m(6) launches player, this file:
 
-     where [4mversion[24m is the [1mrogue [22mversion number, such as  [4m5.4.5[24m.   If  this  file
-     does not exist, it is created.
+                 [1m@RGMDIR@/debuglog.player[0m
 
-     The gene pool is kept in:
+            records tokens (output) written to the current [1mrogue[22m(6) process.
 
-          [1m@RGMDIR@/GenePool[4m[22mversion[0m
+            The  player  program when starting, will create this file if it does
+            not exist, or truncate it to zero size otherwise.  Thus,  this  file
+            only holds data about the most recent run.
 
-     where  [4mversion[24m  is  the  [1mrogue [22mversion number, such as [4m5.4.5[24m.  If this file
-     does not exist, it is created.
+     [1merrlog[0m
+            Output written to standard error (stderr) is appended to:
 
-     A log of all mutations and crossovers is kept in:
+                 [1m@RGMDIR@/errlog[0m
 
-          [1m@RGMDIR@/GeneLog[4m[22mversion[0m
+            If this file does not exist, it is created, otherwise it is appended
+            to  by  the  player program.  Thus, this file may contain data about
+            previous runs.
 
-     where [4mversion[24m is the [1mrogue [22mversion number, such as  [4m5.4.5[24m.   If  this  file
-     does not exist, it is created.
+     [1merror5.4.5[0m
+            A log of internal errors and bugs is kept in:
 
-     The long term memory of monster attributes is kept in:
+                 [1m@RGMDIR@/error[4m[22mversion[0m
 
-          [1m@RGMDIR@/ltm[4m[22mversion[0m
+            where [4mversion[24m is the [1mrogue [22mversion number, such as [4m5.4.5[24m.
 
-     where  [4mversion[24m  is  the  [1mrogue [22mversion number, such as [4m5.4.5[24m.  If this file
-     does not exist, it is created.
+            If this file does not exist, it is created, otherwise it is appended
+            to by the player program.  Thus, this file may  contain  data  about
+            previous runs.
 
-     A log of internal errors and bugs is kept in:
+     [1mgamelog[0m
+            This file is the rogomatic game log file:
 
-          [1m@RGMDIR@/error[4m[22mversion[0m
+                 [1m@RGMDIR@/gamelog[0m
 
-     where [4mversion[24m is the [1mrogue [22mversion number, such as  [4m5.4.5[24m.   If  this  file
-     does not exist, it is created.
+            Lines  that  begin with [4mC:[24m record commands sent to [1mrogue[22m(6) by [1mrogo-[0m
+            [1mmatic[22m(6).  Lines that begin with [4mR:[24m record the responses  sent  from
+            [1mrogue[22m(6) to [1mrogomatic[22m(6).
 
-[1mOTHER PROGRAMS[0m
-     Several programs are used to summarize and display [1mrogomatic[22m's performance.
-     The are installed under the [1m@BINDIR@ [22mdirectory.
+            By using the [1m-p [22mcommand line option, one may replay such a rogomatic
+            game  log.  When combined with a final [4mr_file[24m command line argument,
+            the replay file will be [4mr_file[24m.
 
-     The  [4mrgmgene[24m  command  summarizes  the current population in the gene pool.
-     The [4mrgmscatter[24m command prints a scatter plot of all scores  in  the  score-
-     file.  The [4mrgmhist[24m command prints a histogram of score (or levels if the [1m-l[0m
-     option is given).
+            When a "[1mgood game[22m" exits, the rogomatic game log  is  renamed  to  a
+            file of the form:
+
+                 [1m@RGMDIR@[4m[22m/goodgame.YYYYMMDD.HHMMSS.max_level.score.mnst[0m
+
+            See  [1m-G [4m[22mgoodlvl[24m  in the [1mOPTIONS [22msection for information on what con-
+            stitutes a "[1mgood game[22m".
+
+            The player program when starting, will create this file if  it  does
+            not  exist,  or  truncate  it to zero size otherwise.  Thus, if this
+            file exists, only holds data about the most recent run  if  the  run
+            wasn't a "[1mgood game[22m".
+
+     [1mGeneLock545[0m
+            Before [1mrogomatic[22m(6) and player writes a gene pool related file, this
+            file is locked:
+
+                 [1m@RGMDIR@/GeneLoc[4m[22mversion[0m
+
+            where  [4mversion[24m  is  the  [1mrogue [22mversion number, without dots, such as
+            [4m545[24m.  This file is locked via the [1mflock[22m(2) system call.
+
+            The player program when starting, will create this file if  it  does
+            not exist.  This is a zero length file.
+
+     [1mGeneLog545[0m
+            A log of all mutations and crossovers is kept in:
+
+                 [1m@RGMDIR@/GeneLog[4m[22mversion[0m
+
+            where  [4mversion[24m  is  the  [1mrogue [22mversion number, without dots, such as
+            [4m545[24m.
+
+            If this file does not exist, it is created, otherwise it is appended
+            to by the player program.  Thus, this file may  contain  data  about
+            previous runs.
+
+     [1mGenePool545[0m
+            The gene pool is kept in:
+
+                 [1m@RGMDIR@/GenePool[4m[22mversion[0m
+
+            where  [4mversion[24m  is  the  [1mrogue [22mversion number, without dots, such as
+            [4m545[24m.
+
+            If this file does not exist, it is created, otherwise it is appended
+            to by the player program.  Thus, this file may  contain  data  about
+            previous runs.
+
+     [1mgoodgame.YYYYMMDD.HHMMSS.max_level.score.mnst[0m
+            When  [1mrogomatic[22m(6) co then the [1mgamelog [22mwill be renamed under the ro-
+            gomatic directory as
+
+                 [1m@RGMDIR@[4m[22m/goodgame.YYYYMMDD.HHMMSS.max_level.score.mnst[0m
+
+            where [4mYYYYMMDD_HHMMSS[24m is the year, month, day, hour, minute and sec-
+            ond, in the UTC timezone, and [4mmax_level[24m is the maximum dungeon level
+            that was reached, and [4mscore[24m is the final rogue score,  and  [4mmnst[24m  is
+            the first 4 characters of how the rogue died, or "[4mtota[24m" if the rouge
+            was a total winner.
+
+            This  file  is only created, by renaming [1mgamelog[22m, when a "[1mgood game[22m"
+            ends.  See [1m-G [4m[22mgoodlvl[24m in the [1mOPTIONS [22msection for information on what
+            constitutes a "[1mgood game[22m".
+
+
+     [1mltm545[0m
+            The long term memory of monster attributes is kept in:
+
+                 [1m@RGMDIR@/ltm[4m[22mversion[0m
+
+            where [4mversion[24m is the [1mrogue [22mversion number,  without  dots,  such  as
+            [4m545[24m.
+
+            If  this  file does not exist, it is created, otherwise it is update
+            by the player process.  Thus, this file may contain data about  pre-
+            vious runs.
+
+     [1mlvllog[0m
+            Each time player detects that a new level has been reached, and when
+            player  exits  (due  to rogue death, player quit, or even total win-
+            ner), this file:
+
+                 [1m@RGMDIR@/lvllog[0m
+
+            will be appended with a line containing the  following  space  sepa-
+            rated fields:
+
+                   1. timestamp
+                        microseconds since the epoch
+
+                   2. UTC date
+                        YYYY-MM-DD format
+
+                   3. UTC time
+                        time of day in HH:MM:DD format
+
+                   4. HEADER: Level:
+                        a string ending in a colon
+
+                   5. level number
+                        dungeon level number
+
+                   6. HEADER: Gold:
+                        a string ending in a colon
+
+                   7. gold collected
+                        amount of Gold collected so far
+
+                   8. HEADER: Hp:
+                        a string ending in a colon
+
+                   9. hit points
+                        current hit points followed by ( maximum hit points )
+
+                   10. HEADER: Str:
+                        a string ending in a colon
+
+                   11. strength
+                        current strength followed by ( maximum strength )
+
+                   12. HEADER: Ac:
+                        a string ending in a colon
+
+                   13. armor class
+                        current armor class
+
+                   14. HEADER: Exp:
+                        a string ending in a colon
+
+                   15. experience
+                        experience level followed by / experience points
+
+                   16. HEADER: Am:
+                        a string ending in a colon
+
+                   17. amulet status
+                        - ==> amulet not found , ==> [4mAmulet[24m [4mof[24m [4mYendor[24m found
+
+                   18. end status
+
+            The  player program, when starting, will create this file if it does
+            not exist, or truncate it to zero size otherwise.  Thus,  this  file
+            only holds data about the most recent run.
+
+     [1mpidlog[0m
+            Early on in player, this file:
+
+                 [1m@RGMDIR@/pidlog[0m
+
+            is  appended  with  a  line containing the following space separated
+            fields:
+
+                   1. timestamp
+                        microseconds since the epoch
+
+                   2. UTC date
+                        YYYY-MM-DD format
+
+                   3. UTC time
+                        time of day in HH:MM:DD format
+
+                   4. rogue-pid:
+                        a string ending in a colon
+
+                   5. rogue PID
+                        rogue game process ID
+
+                   6. HEADER: player-pid:
+                        a string ending in a colon
+
+                   7. player PID
+                        player executable process ID
+
+                   8. HEADER: dungeon:
+                        a string ending in a colon
+
+                   9. dnum
+                        dungeon number
+
+            If this file does not exist, it is created, otherwise it is appended
+            to by the player program.  Thus, this file may  contain  data  about
+            previous runs.
+
+     [1mplayer.lck[0m
+            When [1mrogomatic[22m(6) launches, this file:
+
+                 [1m@RGMDIR@/player.lck[0m
+
+            is  locked via [1mflock[22m(2) and then it released.  If the file cannot be
+            locked, then [1mrogomatic[22m(6) will exit.  The purpose  of  this  initial
+            temporary  lock is an attempt to detect if a player program has com-
+            pleted its initial setup and is running.
+
+            When [1mrogomatic[22m(6) executes the player program, early on this file is
+            locked via [1mflock[22m(2) and is held until the program exits.  This  lock
+            helps  prevent  more than one [1mrogomatic[22m(6) from using the same rogo-
+            matic directory.
+
+            The player program, when starting, will create this file if it  does
+            not exist.  This is a zero length file.
+
+     [1mRgm.Lock[0m
+            Before  [1mrogomatic[22m(6)  writes  to  a  critical  file (e.g., [4mltm545[24m or
+            [4mrgmdelta5.4.5[24m ) this file:
+
+                 [1m@RGMDIR@/rgmdelta5.4.5[0m
+
+            is locked via the [1mflock[22m(2) and then is released after the  write  is
+            complete.
+
+            The  player program, when starting, will create this file if it does
+            not exist.  This is a zero length file.
+
+     [1mrgmdelta5.4.5[0m
+            The rogomatic delta file is:
+
+                 [1m@RGMDIR@/rgmdelta[4m[22mversion[0m
+
+            where [4mversion[24m is the [1mrogue [22mversion number, such as [4m5.4.5[24m.
+
+            When the [1m-s [22mcommand line option  is  used  to  print  the  rogomatic
+            scoreboard,  the  rogomatic  delta file is merged into the rogomatic
+            score file (the rogomatic score file is created if needed), and then
+            the rogomatic delta file is removed before printing the result.
+
+            If this file does not exist, it is created, otherwise it is appended
+            to by the player process.  Thus, this file may  contain  data  about
+            previous runs.
+
+     [1mrgmscore5.4.5[0m
+            The rogomatic score file is kept in:
+
+                 [1m@RGMDIR@/rgmscore[4m[22mversion[0m
+
+            where [4mversion[24m is the [1mrogue [22mversion number, such as [4m5.4.5[24m.
+
+            If  this file does not exist, it is created when the [1m-s [22mcommand line
+            option is used.  Thus, this file may  contain  data  about  previous
+            runs.
+
+     [1mrogue.lck[0m
+            A lock file used by [1mrogue[22m(6) to manage writing to its local files.
+
+            When  [1mrogomatic[22m(6)  launches [1mrogue[22m(6), it does so in such a way that
+            the program's default path is changed to:
+
+                 [1m@RGMDIR@/rogue.lck[0m
+
+            If this file does not exist, it is created by [1mrogue[22m(6).  This  is  a
+            zero length file.
+
+     [1mrogue.scr[0m
+            A score file containing the top scores of [1mrogue[22m(6).
+
+            When  [1mrogomatic[22m(6)  launches [1mrogue[22m(6), it does so in such a way that
+            the program's default path is changed to:
+
+                 [1m@RGMDIR@/rogue.sav[0m
+
+            To view the rogue score file:
+
+                 [1mrogue -s @RGMDIR@/rogue.lck[0m
+
+            If this file does not exist, it is created by [1mrogue[22m(6).
+
+     [1msaved_termattr[0m
+            Before [1mrogomatic[22m(6) prepares the screen for [1mncurses[22m(3X) managed  I/O
+            (such  as  raw  terminal mode), it saves the terminal state into the
+            file:
+
+                 [1m@RGMDIR@/saved_termattr[0m
+
+            On exit, [1mrogomatic[22m(6) will use the contents of this file to the pre-
+            vious (hopefully) sane terminal state.
+
+            While running [1mrogue[22m(6) will create this file, and as it is  exiting,
+            the file will be removed.
+
+     [1mtotal.lvllog[0m
+            Each time player detects that a new level has been reached, and when
+            player  exits  (due  to rogue death, player quit, or even total win-
+            ner), this file:
+
+                 [1m@RGMDIR@/total.lvllog[0m
+
+            See [1mlvllog [22mabove for a description of the contents of this file.
+
+            Unlike [1mlvllog[22m, this file isn't truncated at the start of each run.
+
+            If this file does not exist, it is created, otherwise it is appended
+            to by the player process.  Thus, this file may  contain  data  about
+            previous runs.
 
 [1mSEE ALSO[0m
-     rogue(6)
+     [1mflock[22m(2), [1mncurses[22m(3X), [1mrogue[22m(6)
 
 [1mSOURCE CODE[0m
      The source code for [1mrogomatic [22mis available is available at:
@@ -365,7 +1051,7 @@
      in the form of a GitHub repo.
 
      The  above  GitHub  repo  is  maintained by: [1mLandon Curt Noll [22m( GitHub user
-     [1m@lcn2[22m:   [4mhttps://github.com/lcn2[24m )   and    GitHub    user    @jenoola    (
+     [1m@lcn2[22m: [4mhttps://github.com/lcn2[24m ) with help from the GitHub user @jenoola  (
      [4mhttps://github.com/jenoola[24m ).
 
      The  port  to ISO C 2017 with GNU extensions, the port to various platforms
@@ -373,15 +1059,141 @@
      don Curt Noll user [1m@lcn2[22m, and the GitHub user [1m@jenoola[22m.
 
 [1mBUGS[0m
+     Itas easy to imagine that the original authors were more focused on  craft-
+     ing a scholarly paper rather than on creating well written code.
+
+     A  number  of  people  have attempted to improve this code.  Many, many bug
+     fixes have been applied to this code.  [1mLandon Curt Noll [22malone has a  change
+     log  of  mostly  bug fixes, that in mid 2026, exceeded 1500 lines of change
+     description text!  Even so, a [1msignificant number of  bugs  [22mremain  in  this
+     code.
+
+     Bug fixes in the form of GitHub pull requests are [1mvery welcome [22mat:
+
+          [4mhttps://github.com/lcn2/rogomatic/pulls[0m
+
+     You  are  likely to notice that [1mrogomatic[22m(6) will occasionally hang.  Often
+     the code will hang when the state machine, expect a response from  [1mrogue[22m(6)
+     encounters  an  unexpected message (e.g., announcing a new level, reporting
+     hunger, coming under attack, removal of a temporary impairment, etc.)
+
      Occasionally [1mrogomatic [22mwill dead-lock waiting for input from  [1mrogue[22m.   When
-     this  happens,  type an interrupt and enter the [4mt[24m command again.  This usu-
-     ally wakes it up enough to re-start the game.  In completely unusual cases,
-     try interrupting and then entering the [4mS[24m command to save the game, and then
-     re-start with "rogomatic -r".  Sometimes you will have to  use  transparent
-     mode to get it down to the next level before turning it loose again.
+     this  happens,  try  to type [4mt[24m in an effort to toggle [4mtransparent[24m mode.  If
+     that is successful, type [4mt[24m again in the hopes of resuming the run.
+
+     Sometimes you will have to use transparent mode to get it down to the  next
+     level before turning it loose again.
+
+     In  some hanging cases, try interrupting (usually by typing control C), and
+     then entering the [4mS[24m command to save the game.  Once  saved,  re-start  with
+     "rogomatic -r" and then [1mhope [22mthat the restart will be OK.
+
+     One work-a-round to hanging is to use the [1m-a [4m[22msecs[24m command line option, such
+     as using: [1m-a [4m[22m4.5[24m on the command line.
+
+     When  the [1m-a [4m[22msecs[24m command line option is used, then before [1mrogomatic[22m(6) at-
+     tempts to read from [1mrogue[22m(6), a timeout alarm will be  set.   If  the  read
+     hangs for more than [4msecs[24m seconds, a [1mSIGARLM [22msignal will be delivered to the
+     player process.  The [1mSIGARLM [22mis then caught and a [1msiglongjmp[22m(3) performed a
+     non-local  jump to a control point where player process is much more likely
+     to resume normal operation.  Nevertheless, there  are  circumstances  where
+     non-local jump still hangs.
+
+     While  less  often, [1mrogomatic[22m(6) will enter a loop, such as cycling between
+     two positions, or cycling between pick up and dropping an item.  The  above
+     mentioned  use  of keyboard intervention may help, if you catch the loop in
+     time.  Without some form of intervention, the rogue will eventually die  of
+     starvation.   As  with  real  life,  death  tends  to interrupt the flow of
+     things.  :-)
+
+[1mDEBUGGING[0m
+     See the [1mBUGS [22msection above for why you are welcome to debug [1mrogomatic[22m(6).
+
+     See also any open GitHub issues by visiting:
+
+          [4mhttps://github.com/lcn2/rogomatic/issues[0m
+
+     If you wish to debug [1mrogomatic[22m(6) we recommend compiling with the  [1mclang[22m(1)
+     compiler, and debugging with the [1mlldb[22m(1) debugger as these tools do well to
+     handle  to debugging across [1mfork (2) [22msystem calls, and cross process execu-
+     tions such as making [1mexecl (2) [22msystem calls.
+
+     You should first recompile [1mrogomatic[22m(6) with full debugging and C tags:
+
+          [1mmake clobber clang tags[0m
+
+     When debugging, you should use the [1m-d [22mcommand line option to always  create
+     a  new rogomatic sub-directory so that the rogomatic the environment starts
+     out in an initial state.  Attempting to debug an observed problem in a pre-
+     vious run set (such as what will happen when using the [1mrerun_rogo  [22mcommand)
+     will  be  problematic  because  [1mrogomatic[22m(6) is designed to evolve its game
+     play.  By using the [1m-d [22mcommand line option an observed  behaviour  is  more
+     likely to be reproducible, and a more likely to be successfully debugged.
+
+     Using  the  [1m-d  [22mcommand line option will cause an accumulation of rogomatic
+     sub-directories, so you might wish to clean out old rogomatic  sub-directo-
+     ries from time to time by doing:
+
+          [1mrm -rf /var/tmp/rogomatic/2*[0m
+
+     Using  the [1m-S [22mseed command line option will cause the [1mrandom[22m(3) pseudo-ran-
+     dom number generators to be seeded with a  fixed  value  via  a  [1msrandom[22m(3)
+     call.   By default, both [1mrogomatic[22m(6) and [1mrogue[22m(6) with a seed that changes
+     on each new invocation.  By using the [1m-S [22mseed command line option you force
+     both programs to seed with the same value each time.  This will make behav-
+     iour is more likely to be reproducible, and a more likely  to  be  success-
+     fully debugged.
+
+     By  using  the [1m-H [22mand the [1m-U [4m[22m0[24m command line option, you won't slow down the
+     rogomatic operations, allowing  one  to  debug  deeper  dungeon  conditions
+     sooner.
+
+     The [4mseed[24m value can be any integer between 0 and 2147483647.  For example:
+
+          [1m./rogomatic -H -U 0 -d -S 1989014291[0m
+
+     Because  [1mrogomatic[22m(6)  makes extensive use of ncurses, and because puts the
+     terminal into raw mode, simply running the command from within the debugger
+     will very problematic.  Both [1mrogomatic[22m(6) and your debugger will fight  for
+     control of the terminal, and you will [1mNOT [22mbe the winner.  Moreover, the use
+     of  ncurses  by dueling programs will produce a mess on the screen.  Fortu-
+     nately [1mlldb[22m(1) offers a clean way around this problem.
+
+     Start the debugger on [1mrogomatic[22m(6) with both the [1m-d [22mand the [1m-S [22mseed command
+     line option.  For example:
+
+          [1mlldb -- ./rogomatic -H -U 0 -d -S 3[0m
+
+     Once the debugging has started, set a breakpoint somewhere with the  player
+     process:
+
+          [1mb getrogue[0m
+
+     Don't  worry  about  the  debugger complaining about not being able resolve
+     breakpoint to any actual locations.  That will resolve itself later on.
+
+     Next, launch the process in a separate terminal window.   This  will  cause
+     another terminal window to pop-up:
+
+          [1mprocess launch --tty[0m
+
+     [1mNOTE[22m:  Depending  on your terminal manager, keyboard focus may shift to the
+     new terminal window pop-up.  You may have the click back on original termi-
+     nal window so that your keyboard actions don't get consumed by the new ter-
+     minal window.
+
+     Have the debugger continue the process:
+
+          [1mc[0m
+
+     Best wishes in debugging.  If you find a bug fix, please  consider  submit-
+     ting a GitHub pull requests are [1mvery welcome [22mat:
+
+          [4mhttps://github.com/lcn2/rogomatic/pulls[0m
+
 
 [1mHISTORY[0m
-     For  a  historic  history of some changes, see the [4mORIG_DOC/old.history.txt[0m
-     file in the source directory.
+     For   an   outdated,   and  historic  history  of  some  changes,  see  the
+     [4mORIG_DOC/old.history.txt[24m file in the source directory.
 
-4th Berkeley Distribution          2026 Mar 19                      [4mROGOMATIC[24m(6)
+4th Berkeley Distribution          2026 Aug 03                      [4mROGOMATIC[24m(6)

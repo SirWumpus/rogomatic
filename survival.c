@@ -48,13 +48,16 @@
 # define SO	  1
 # define SE	  0
 
-# define highlight(rowcol,stand)		\
-  if (print || debug (D_SCREEN))		\
-  { at((rowcol)/C,(rowcol)%C);		\
-    if (stand) standout ();			\
-    printw("%c",screen[0][rowcol]);		\
-    if (stand) standend ();			\
-    refresh (); }
+# define highlight(rowcol,stand)	\
+  if (print || debug (D_SCREEN)) {	\
+    at((rowcol)/C,(rowcol)%C);		\
+    if (stand) standout ();		\
+    printw("%c",screen[0][rowcol]);	\
+    if (stand) standend ();		\
+    if (!quiet) {			\
+      refresh ();			\
+    }					\
+  }
 
 /* static declarations */
 
