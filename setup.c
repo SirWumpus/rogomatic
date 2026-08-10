@@ -51,7 +51,7 @@
 # define READ    0
 # define WRITE   1
 
-# define VERSION "14.2.17 2026-08-03"
+# define VERSION "14.2.18 2026-08-10"
 
 /*
  * global declarations
