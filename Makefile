@@ -477,7 +477,7 @@ end_player: end_player.sh
 	${CHMOD} +x $@
 
 mstop_rogo: mstop_rogo.sh
-	${CP} -f end_player.sh $@
+	${CP} -f mstop_rogo.sh $@
 	${CHMOD} +x $@
 
 
