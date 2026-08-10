@@ -1,7 +1,7 @@
-.TH ROGOMATIC 6 "2026 Aug 03"
+.TH ROGOMATIC 6 "2026 Aug 10"
 .UC 4
 .SH NAME
-rogomatic, run_rogo, rerun_rogo, mrerun_rogo, end_player, unstuck_player \- Automatically Exploring The Dungeons of Doom
+rogomatic, run_rogo, rerun_rogo, mrerun_rogo, mstop_rogo, end_player, unstuck_player \- Automatically Exploring The Dungeons of Doom
 .SH SYNOPSIS
 .I rogomatic
 .in +0.5i
@@ -100,6 +100,9 @@ rogomatic, run_rogo, rerun_rogo, mrerun_rogo, end_player, unstuck_player \- Auto
 .BI \-a\  secs
 ]
 [
+.BI \-C\  coredir
+]
+[
 .B \-d
 ]
 [
@@ -165,6 +168,9 @@ rogomatic, run_rogo, rerun_rogo, mrerun_rogo, end_player, unstuck_player \- Auto
 .br
 [
 .BI \-a\  secs
+]
+[
+.BI \-C\  coredir
 ]
 [
 .B \-d
@@ -262,6 +268,9 @@ rogomatic, run_rogo, rerun_rogo, mrerun_rogo, end_player, unstuck_player \- Auto
 .BI \-a\  secs
 ]
 [
+.BI \-C\  coredir
+]
+[
 .B \-d
 ]
 [
@@ -295,6 +304,30 @@ rogomatic, run_rogo, rerun_rogo, mrerun_rogo, end_player, unstuck_player \- Auto
 [
 .B \-Z
 ]
+.I ID
+.PP
+.I mstop_rogo
+.in +0.5i
+[
+.B \-h
+]
+[
+.B \-V
+]
+[
+.BI \-v\  level
+]
+[
+.B \-n
+]
+[
+.B \-N
+]
+.br
+[
+.BI \-D\  base_rgmdir
+]
+[ \fIID ..\fP ]
 .in -0.5i
 .PP
 .I end_player

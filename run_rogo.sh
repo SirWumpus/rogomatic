@@ -32,7 +32,7 @@
 
 # setup
 #
-export VERSION="1.4.6 2026-07-31"
+export VERSION="1.5.0 2026-08-10"
 NAME=$(basename "$0")
 export NAME
 #
@@ -72,6 +72,10 @@ export D_FLAG=
 export E_FLAG=
 export CAP_Z_FLAG=
 export QUIET_MODE=
+export CRASH_BASE_DIR=
+OS_TYPE="$(uname -s)"
+export OS_TYPE
+export SCRIPT_PID="$$"
 
 
 # NOTE: The following RGMDIR is NOT the default for rogomatic (/var/tmp/rogomatic)
@@ -234,11 +238,82 @@ function find_progs
 }
 
 
+# Translate a signal number to its canonical signal name
+#
+# Converts a raw numeric signal value (e.g., 11) into its canonical string representation (e.g., SIGSEGV).
+# Uses 'kill -l' for cross-platform compatibility between Linux and macOS.
+#
+function get_signal_name
+{
+    local sig_num="$1"
+    local name
+
+    # 'kill -l <num>' returns signal names portably across Linux and macOS
+    #
+    if name="$(kill -l "$sig_num" 2>/dev/null)"; then
+        # Ensure the 'SIG' prefix is consistently attached (some systems output 'SEGV' instead of 'SIGSEGV')
+        if [[ "$name" != SIG* ]]; then
+            name="SIG${name}"
+        fi
+        echo "$name"
+    else
+        echo "SIGUNKNOWN"
+    fi
+}
+
+# Function: find_target_core_file
+#
+# Locates a generated core dump file specific to the terminated target process PID.
+# Handles OS-specific core file naming patterns (macOS /cores/core.<PID> vs Linux local/pattern paths).
+#
+function find_target_core_file
+{
+    local pid="$1"
+
+    case "$OS_TYPE" in
+        Darwin)
+            # macOS kernel strictly names core files as /cores/core.<PID>
+            if [[ -f "/cores/core.${pid}" ]]; then
+                echo "/cores/core.${pid}"
+            fi
+            ;;
+        Linux)
+            # 1. Check current working directory for PID-suffixed or standard core files
+            if [[ -f "./core.${pid}" ]]; then
+                echo "./core.${pid}"
+            elif [[ -f "./core" ]]; then
+                echo "./core"
+            else
+                # 2. Inspect system core_pattern directory if an absolute path pattern is configured
+                if [[ -r /proc/sys/kernel/core_pattern ]]; then
+                    local pattern pattern_dir
+                    pattern="$(cat /proc/sys/kernel/core_pattern)"
+                    if [[ "$pattern" == /* ]]; then
+                        pattern_dir="$(dirname "$pattern")"
+                        if [[ -f "${pattern_dir}/core.${pid}" ]]; then
+                            echo "${pattern_dir}/core.${pid}"
+                        fi
+                    fi
+                fi
+            fi
+            ;;
+        *)
+            # Fallback for generic Unix environments
+            if [[ -f "./core.${pid}" ]]; then
+                echo "./core.${pid}"
+            elif [[ -f "./core" ]]; then
+                echo "./core"
+            fi
+            ;;
+    esac
+}
+
+
 # usage
 #
 export USAGE="usage: $0
         [-h] [-v level] [-V] [-n] [-N]
-        [-a secs] [-d] [-D rgmdir] [-e] [-f rogue] [-G goodlvl] [-H]
+        [-a secs] [-C coredir] [-d] [-D rgmdir] [-e] [-f rogue] [-G goodlvl] [-H]
         [-P player] [-q] [-r rogomatic] [-S seed] [-U usec] [-Z]
 
     -h          print help message and exit
@@ -248,6 +323,9 @@ export USAGE="usage: $0
     -N          do not process anything, just parse arguments (def: process something)
 
     -a secs             set the timeout timer to secs seconds (def: no timeout timer)
+    -C coredir          move code dumps under coredir, @ ==> use rgmdir/coredump (def: don't save core dumps)
+                            NOTE: To improve the ability to debug core dumps using lldb(1), compile
+                                  rogomatic, and player using: make clobber clang
     -d                  use a UTC date and time sub-directory under rogomatic directory path (def: don't)
     -D rgmdir           rogomatic directory (def: $RGMDIR)
                             NOTE: if rgmdir is /var/tmp/rogomatic unstuck_player won't unstick unless -A is used
@@ -269,7 +347,8 @@ Exit codes:
      1         player already running
      2         -h and help string printed or -V and version string printed
      3         command line error
-     6         problems found with or in the rogomatic directory
+     4         -C dir used and core dump collected
+     6         problems found with or in the rogomatic directory, or with core dump collection directory
      7         rogomatic returned an error
  >= 10         internal error
 
@@ -278,7 +357,7 @@ $NAME version: $VERSION"
 
 # parse command line
 #
-while getopts :hv:VnNa:dD:ef:G:HP:qr:S:U:Z flag; do
+while getopts :hv:VnNa:C:dD:ef:G:HP:qr:S:U:Z flag; do
   case "$flag" in
     h) echo "$USAGE"
 	exit 2
@@ -295,6 +374,8 @@ while getopts :hv:VnNa:dD:ef:G:HP:qr:S:U:Z flag; do
 
     a) SECS="$OPTARG"
 	;;
+    C) CRASH_BASE_DIR="$OPTARG"
+        ;;
     d) D_FLAG="-d"
         ;;
     D) RGMDIR="$OPTARG"
@@ -348,6 +429,9 @@ if [[ $USLEEP -lt 0 ]]; then
     echo "$0: ERROR: -U $USLEEP must be >= 0" 1>&2
     echo "$USAGE" 1>&2
     exit 3
+fi
+if [[ $CRASH_BASE_DIR == @ ]]; then
+    CRASH_BASE_DIR="$RGMDIR/coredump"
 fi
 #
 # remove the options
@@ -414,6 +498,9 @@ if [[ $V_FLAG -ge 3 ]]; then
     echo "$0: debug[3]: D_FLAG=$D_FLAG" 1>&2
     echo "$0: debug[3]: E_FLAG=$E_FLAG" 1>&2
     echo "$0: debug[3]: QUIET_MODE=$QUIET_MODE" 1>&2
+    echo "$0: debug[3]: CRASH_BASE_DIR=$CRASH_BASE_DIR" 1>&2
+    echo "$0: debug[3]: OS_TYPE=$OS_TYPE" 1>&2
+    echo "$0: debug[3]: SCRIPT_PID=$SCRIPT_PID" 1>&2
     for index in "${!OPTION[@]}"; do
         echo "$0: debug[$V_FLAG]: OPTION[$index]=${OPTION[$index]}" 1>&2
     done
@@ -443,9 +530,67 @@ elif [[ $status -ne 0 ]]; then
 fi
 
 
+# If -D dir was used on macOS, verify that /cores is mode 1777
+#
+if [[ $OS_TYPE == "Darwin" && -n $CRASH_BASE_DIR ]]; then
+    if [[ "$(/usr/bin/stat -f "%A" /cores 2>/dev/null)" == "1777" ]]; then
+	if [[ $V_FLAG -ge 3 ]]; then
+	    echo "$0: debug[3]: macOS /cores correctly set mode 1777" 1>&2
+	fi
+    else
+	echo "$0: ERROR: -D $CRASH_BASE_DIR but /cores is not mode 1777" 1>&2
+	ls -ld /cores
+	exit 6
+    fi
+fi
+
+
+# if -C, set the maximum size of core files created to unlimited
+#
+if [[ -n $CRASH_BASE_DIR ]]; then
+
+    # Enable unconstrained core file generation for child processes
+    #
+    if [[ $V_FLAG -ge 1 ]]; then
+        echo "$0: debug[1]: ulimit -c unlimited" 1>&2
+    fi
+    ulimit -c unlimited
+
+    # Create a crash collection directory if it doesn't already exist
+    #
+    mkdir -p "$CRASH_BASE_DIR"
+    if [[ ! -d $CRASH_BASE_DIR || ! -w $CRASH_BASE_DIR ]]; then
+	echo "$0: ERROR: failed to crate a writable crash collection directory: $CRASH_BASE_DIR" 1>&2
+	exit 6
+    fi
+    if [[ $V_FLAG -ge 3 ]]; then
+        echo "$0: debug[3]: CRASH_BASE_DIR: $CRASH_BASE_DIR" 1>&2
+    fi
+fi
+if [[ -z $QUIET_MODE ]]; then
+    trap 'tput reset; reset; exit' EXIT INT TERM
+else
+    trap 'exit' EXIT INT TERM
+fi
+
+
 # exec the rogomatic code
 #
 if [[ -z $NOOP ]]; then
+
+    # prep to exec
+    #
+    export SIGNAL=
+    export SIGNAL_NAME=
+    export TARGET_BIN=
+    export EXIT_CODE=
+    export CORE_FILE=
+    export BASE_CORE_FILE=
+    export TIMESTAMP=
+    export ISOLATION_DIR=
+
+    # loop while we look for the programs
+    #
     while :; do
 
 	# find the programs, and set the rogomatic tool command line
@@ -453,6 +598,9 @@ if [[ -z $NOOP ]]; then
 	find_progs
 	status="$?"
 	if [[ $status -ne 0 ]]; then
+
+	    # something was not found, wait and try again a bit later
+	    #
 	    sleep 2
 	    continue
 	fi
@@ -460,21 +608,107 @@ if [[ -z $NOOP ]]; then
 	# run rogomatic
 	#
 	if [[ $V_FLAG -ge 1 ]]; then
-	    echo "$0: debug[5]: about to execute: $ROGOMATIC_TOOL ${OPTION[*]} --" 1>&2
+	    echo "$0: debug[5]: about to execute: $ROGOMATIC_TOOL ${OPTION[*]} -- &" 1>&2
 	fi
-	"$ROGOMATIC_TOOL" "${OPTION[@]}" --
-	status="$?"
-	if [[ $status -ne 0 ]]; then
-	    if [[ $status -eq 129 ]]; then
-		echo "$0: notice SIGHUP: $ROGOMATIC_TOOL ${OPTION[*]} --" 1>&2
+	"$ROGOMATIC_TOOL" "${OPTION[@]}" -- &
+	TARGET_PID="$!"
+
+	# wait for rogomatic running in the background to fail
+	#
+	wait "$TARGET_PID"
+	EXIT_CODE="$?"
+
+	if [[ -n $EXIT_CODE && $EXIT_CODE -ne 0 ]]; then
+
+	    # case: exit due to a signal
+	    #
+	    if [[ $EXIT_CODE -gt 128 ]]; then
+
+		# determine signal number
+		#
+		SIGNAL=$(( EXIT_CODE - 128 ))
+		SIGNAL_NAME="$(get_signal_name "$SIGNAL")"
+
+		# report signal exit
+		#
+		echo "$0: notice: signal $SIGNAL_NAME ($SIGNAL): $ROGOMATIC_TOOL ${OPTION[*]} --" 1>&2
+
+		# Pause briefly to allow the system kernel time to finish writing the core dump file to disk.
+		#
+		sleep 1.0
+
+		# Search for core dump file associated with the specific target PID.
+		#
+		CORE_FILE="$(find_target_core_file "$TARGET_PID")"
+		if [[ $V_FLAG -ge 3 ]]; then
+		    if [[ -n $CORE_FILE ]]; then
+			echo "$0: debug[3]: find_target_core_file found: $CORE_FILE" 1>&2
+		    else
+			echo "$0: debug[3]: find_target_core_file found nothing" 1>&2
+		    fi
+		fi
+		BASE_CORE_FILE="$(basename "$CORE_FILE")"
+
+		# case: core dump file found
+		#
+		if [[ -n "$CORE_FILE" && -f "$CORE_FILE" ]]; then
+
+		    # Construct a unique isolation directory name using timestamp, script PID, target PID, and iteration count.
+		    #
+		    TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
+		    ISOLATION_DIR="${CRASH_BASE_DIR}/crash.${TIMESTAMP}.${SCRIPT_PID}.${TARGET_PID}"
+		    mkdir -p "$ISOLATION_DIR"
+		    if [[ ! -d $ISOLATION_DIR || ! -w $ISOLATION_DIR ]]; then
+			echo "$0: ERROR: failed to crate a writable isolation directory: $ISOLATION_DIR" 1>&2
+			exit 6
+		    fi
+
+		    # move core file into the isolation directory
+		    #
+		    echo "$0: Warning: moving core file: mv -f $CORE_FILE ISOLATION_DIR/$BASE_CORE_FILE" 1>&2
+		    mv -f "$CORE_FILE" "$ISOLATION_DIR/$BASE_CORE_FILE"
+		    status="$?"
+		    if [[ $status -ne 0 ]]; then
+			echo "$0: Warning: cp -v -f $CORE_FILE $ISOLATION_DIR/$BASE_CORE_FILE failed, error: $status" 1>&2
+		    fi
+
+		    # save copy of rogomatic in isolation directory
+		    #
+		    if [[ $V_FLAG -ge 3 ]]; then
+			echo "$0: debug[3]: save executable copy to: cp -v -f $ROGOMATIC_TOOL $ISOLATION_DIR/rogomatic" 1>&2
+		    fi
+		    cp -f "$ROGOMATIC_TOOL" "$ISOLATION_DIR/rogomatic"
+		    status="$?"
+		    if [[ $status -ne 0 ]]; then
+			echo "$0: Warning: cp -v -f $ROGOMATIC_TOOL $ISOLATION_DIR/rogomatic failed, error: $status" 1>&2
+		    fi
+
+		    # save copy of player in isolation directory
+		    #
+		    if [[ $V_FLAG -ge 3 ]]; then
+			echo "$0: debug[3]: save executable copy to: cp -v -f $PLAYER_TOOL $ISOLATION_DIR/player" 1>&2
+		    fi
+		    cp -f "$PLAYER_TOOL" "$ISOLATION_DIR/player"
+		    status="$?"
+		    if [[ $status -ne 0 ]]; then
+			echo "$0: Warning: cp -v -f $PLAYER_TOOL $ISOLATION_DIR/player failed, error: $status" 1>&2
+		    fi
+		fi
+
+	    # case: non-signal related exit
+	    #
 	    else
 		echo "$0: Warning: $ROGOMATIC_TOOL ${OPTION[*]} -- failed," \
-		     "error code: $status" 1>&2
+		     "error code: $EXIT_CODE" 1>&2
 		exit 7
 	    fi
 	fi
+
+	# end of loop
+	#
 	break
     done
+
 elif [[ $V_FLAG -ge 3 ]]; then
     echo "$0: debug[3]: because of -n, execution of $ROGOMATIC_TOOL ${OPTION[*]} -- was disabled" 1>&2
 fi

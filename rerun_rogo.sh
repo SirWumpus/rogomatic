@@ -32,7 +32,7 @@
 
 # setup
 #
-export VERSION="1.3.8 2026-07-31"
+export VERSION="1.3.9 2026-08-10"
 NAME=$(basename "$0")
 export NAME
 #
@@ -84,6 +84,7 @@ export D_FLAG=
 export E_FLAG=
 export CAP_Z_FLAG=
 export QUIET_MODE=
+export CRASH_BASE_DIR=
 
 
 # NOTE: The following RGMDIR is NOT the default for rogomatic (/var/tmp/rogomatic)
@@ -243,6 +244,10 @@ function find_progs
     if [[ -n $QUIET_MODE ]]; then
 	OPTION+=("-q")		# turn on quiet mode
     fi
+    if [[ -n $CRASH_BASE_DIR ]]; then
+	OPTION+=("-C")		# set collect generated cores directory
+	OPTION+=("$CRASH_BASE_DIR")
+    fi
 
     # found everything
     #
@@ -255,7 +260,7 @@ function find_progs
 export USAGE="usage: $0
         [-h] [-v level] [-V] [-n] [-N]
         [-i idlesec] [-R run_rogo] [-s stopfile]
-        [-a secs] [-d] [-D rgmdir] [-e] [-f rogue] [-G goodlvl] [-H]
+        [-a secs] [-C coredir] [-d] [-D rgmdir] [-e] [-f rogue] [-G goodlvl] [-H]
         [-P player] [-q] [-r rogomatic] [-S seed] [-U usec] [-Z]
 
     -h          print help message and exit
@@ -270,9 +275,12 @@ export USAGE="usage: $0
     -s stopfile         stop the rerun cycle if stopfile exists (def: $STOP_FILE)
 
     -a secs             set the timeout timer to secs seconds (def: no timeout timer)
+    -C coredir          move code dumps under coredir, @ ==> use rgmdir/coredump (def: don't save core dumps)
+                            NOTE: To improve the ability to debug core dumps using lldb(1), compile
+                                  rogomatic, and player using: make clobber clang
     -d                  use a UTC date and time sub-directory under rogomatic directory path (def: don't)
     -D rgmdir           rogomatic directory (def: $RGMDIR)
-                              NOTE: This implies: -s rgmdir/.stopfile
+                            NOTE: This implies: -s rgmdir/.stopfile
     -e                  turn off rogomatic game logging (def: rogomatic game log is $RGMDIR/gamelog)
     -f rogue            path to rogue (def: $ROGUE_TOOL)
     -G goodlvl          set the good game level to goodlvl (def: $GOODGAME)
@@ -280,6 +288,7 @@ export USAGE="usage: $0
 
     -P player           path to player (def: $PLAYER_TOOL)
     -q                  quiet mode: do not output rogue game play (def: do)
+                            NOTE: run_rogo stdout & stderr appended to rgmdir/run_rogo.log
     -r rogomatic        path to rogomatic (def: $ROGOMATIC_TOOL)
     -S seed             set rogomatic seed (def: use a random seed)
     -U usec             set the sleep time between actions to usec microseconds (def: $USLEEP)
@@ -299,7 +308,7 @@ $NAME version: $VERSION"
 
 # parse command line
 #
-while getopts :hv:VnNi:R:s:a:dD:ef:G:HP:qr:S:U:Z flag; do
+while getopts :hv:VnNi:R:s:a:C:dD:ef:G:HP:qr:S:U:Z flag; do
   case "$flag" in
     h) echo "$USAGE"
 	exit 2
@@ -323,28 +332,30 @@ while getopts :hv:VnNi:R:s:a:dD:ef:G:HP:qr:S:U:Z flag; do
 
     a) SECS="$OPTARG"
 	;;
+    C) CRASH_BASE_DIR="$OPTARG"
+	;;
     d) D_FLAG="-d"
-        ;;
+	;;
     D) RGMDIR="$OPTARG"
        STOP_FILE="$RGMDIR/.stopfile"
 	;;
     e) E_FLAG="-e"
-        ;;
+	;;
     f) ROGUE_TOOL="$OPTARG"
 	;;
     G) GOODGAME="$OPTARG"
 	;;
     H) CAP_H_FLAG="-H"
-        ;;
+	;;
 
     P) PLAYER_TOOL="$OPTARG"
 	;;
     q) QUIET_MODE="-q"
-        ;;
+	;;
     r) ROGOMATIC_TOOL="$OPTARG"
 	;;
     S) SEED="$OPTARG"
-        ;;
+	;;
     U) USLEEP="$OPTARG"
 	CAP_U_FLAG="-U"
 	;;
@@ -449,6 +460,7 @@ if [[ $V_FLAG -ge 3 ]]; then
     echo "$0: debug[3]: E_FLAG=$E_FLAG" 1>&2
     echo "$0: debug[3]: CAP_Z_FLAG=$CAP_Z_FLAG" 1>&2
     echo "$0: debug[3]: QUIET_MODE=$QUIET_MODE" 1>&2
+    echo "$0: debug[3]: CRASH_BASE_DIR=$CRASH_BASE_DIR" 1>&2
     for index in "${!OPTION[@]}"; do
 	echo "$0: debug[$V_FLAG]: OPTION[$index]=${OPTION[$index]}" 1>&2
     done
@@ -480,15 +492,19 @@ fi
 
 # setup for process cycling
 #
-trap "tput reset; exit" 0 1 2 3 15
+if [[ -z $QUIET_MODE ]]; then
+    trap 'tput reset; reset; exit' 0 1 2 3 15
+else
+    trap 'exit' 0 1 2 3 15
+fi
 if [[ -e $STOP_FILE ]]; then
     if [[ $V_FLAG -ge 1 ]]; then
 	echo "$0: debug[1]: rm -f $STOP_FILE" 1>&2
     fi
     rm -f "$STOP_FILE"
-fi
-if [[ -e $STOP_FILE ]]; then
-    echo "$0: ERROR: unable to pre-remote stopfile: $STOP_FILE" 1>&2
+    fi
+    if [[ -e $STOP_FILE ]]; then
+	echo "$0: ERROR: unable to pre-remote stopfile: $STOP_FILE" 1>&2
     exit 11
 fi
 
@@ -500,7 +516,11 @@ while :; do
     # if we find a stopfile, remove the stopfile, and the loop
     #
     if [[ -e $STOP_FILE ]]; then
-	tput reset  # paranoia
+	if [[ -z $QUIET_MODE ]]; then
+	    trap 'tput reset; reset; exit' 0 1 2 3 15
+	else
+	    trap 'exit' 0 1 2 3 15
+	fi
 	if [[ $V_FLAG -ge 1 ]]; then
 	    echo "$0: debug[1]: stopfile detected, exiting: $STOP_FILE" 1>&2
 	fi
@@ -521,19 +541,43 @@ while :; do
     # run_rogo tool
     #
     if [[ -z $NOOP ]]; then
-	if [[ $V_FLAG -ge 1 ]]; then
-	    echo "$0: debug[5]: about to execute: $RUN_ROGO_TOOL ${OPTION[*]}" 1>&2
-	fi
-	"$RUN_ROGO_TOOL" "${OPTION[@]}"
-	status="$?"
-	if [[ $status -ne 0 ]]; then
-	    if [[ $status -eq 129 ]]; then
-		echo "$0: notice SIGHUP: $RUN_ROGO_TOOL ${OPTION[*]}" 1>&2
-	    elif [[ $status -eq 7 ]]; then
-		echo "$0: notice: exit 7: $RUN_ROGO_TOOL ${OPTION[*]}" 1>&2
-	    else
-		echo "$0: Warning: $RUN_ROGO_TOOL ${OPTION[*]} failed," \
-		     "error code: $status" 1>&2
+
+	# case: -q quiet mode, append run_rogo output to $RGMDIR/run_rogo.log
+	#
+	if [[ -n $QUIET_MODE ]]; then
+	    if [[ $V_FLAG -ge 1 ]]; then
+		echo "$0: debug[5]: about to execute: $RUN_ROGO_TOOL ${OPTION[*]} >> $RGMDIR/run_rogo.log 2>&1" 1>&2
+	    fi
+	    "$RUN_ROGO_TOOL" "${OPTION[@]}" >> "$RGMDIR/run_rogo.log" 2>&1
+	    status="$?"
+	    if [[ $status -ne 0 ]]; then
+		if [[ $status -eq 129 ]]; then
+		    echo "$0: notice SIGHUP: $RUN_ROGO_TOOL ${OPTION[*]} >> $RGMDIR/run_rogo.log 2>&1" 1>&2
+		elif [[ $status -eq 7 ]]; then
+		    echo "$0: notice: exit 7: $RUN_ROGO_TOOL ${OPTION[*]} >> $RGMDIR/run_rogo.log 2>&1" 1>&2
+		else
+		    echo "$0: Warning: $RUN_ROGO_TOOL ${OPTION[*]} >> $RGMDIR/run_rogo.log 2>&1 failed," \
+			 "error code: $status" 1>&2
+		fi
+	    fi
+
+	# case: normal (non quiet) mode
+	#
+	else
+	    if [[ $V_FLAG -ge 1 ]]; then
+		echo "$0: debug[5]: about to execute: $RUN_ROGO_TOOL ${OPTION[*]}" 1>&2
+	    fi
+	    "$RUN_ROGO_TOOL" "${OPTION[@]}"
+	    status="$?"
+	    if [[ $status -ne 0 ]]; then
+		if [[ $status -eq 129 ]]; then
+		    echo "$0: notice SIGHUP: $RUN_ROGO_TOOL ${OPTION[*]}" 1>&2
+		elif [[ $status -eq 7 ]]; then
+		    echo "$0: notice: exit 7: $RUN_ROGO_TOOL ${OPTION[*]}" 1>&2
+		else
+		    echo "$0: Warning: $RUN_ROGO_TOOL ${OPTION[*]} failed," \
+			 "error code: $status" 1>&2
+		fi
 	    fi
 	fi
     elif [[ $V_FLAG -ge 3 ]]; then

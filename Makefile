@@ -42,6 +42,7 @@ CHGRP= chgrp
 CHMOD= chmod
 CLANG_FORMAT= clang-format
 CMP= cmp
+CODESIGN= codesign
 COLCRT= colcrt
 CP= cp
 CTAGS= ctags
@@ -263,6 +264,10 @@ ORIG_DOC= ORIG_DOC/amulet.photo ORIG_DOC/Bugreport ORIG_DOC/copyright \
 #
 MISC_DOC= CODE_OF_CONDUCT.md CONTRIBUTING.md COPYING LICENSE README.md SECURITY.md
 
+# File used by macOS to codesign for debugging
+#
+DEBUG_ENTITLEMENTS= debug.entitlements
+
 MAKE_FILE= Makefile
 
 
@@ -438,12 +443,18 @@ histplot: histplot.o timer.o utility.o strl.o config.o terminal.o
 
 player: ${OBJS}
 	${CC} ${LDFLAGS} ${OBJS} -lm ${LIBS} -o $@
+ifeq ($(target),Darwin)
+	${CODESIGN} -s - -f --entitlements ${DEBUG_ENTITLEMENTS} $@
+endif
 
 rgmplot: rgmplot.o timer.o utility.o strl.o config.o terminal.o
 	${CC} ${LDFLAGS} rgmplot.o timer.o utility.o strl.o config.o terminal.o ${LIBS} -o $@
 
 rogomatic: setup.o scorefile.o timer.o utility.o config.o strl.o terminal.o fork_exec.o
 	${CC} ${LDFLAGS} setup.o scorefile.o timer.o utility.o config.o strl.o terminal.o fork_exec.o ${LIBS} -o $@
+ifeq ($(target),Darwin)
+	${CODESIGN} -s - -f --entitlements ${DEBUG_ENTITLEMENTS} $@
+endif
 
 run_rogo: run_rogo.sh
 	${CP} -f run_rogo.sh $@
@@ -745,7 +756,9 @@ clobber: legacy_clobber clean
 install: all ${MISC_DOC} ${ORIG_DOC} stddocs
 	${INSTALL} -d -m 0755 ${BINDIR}
 	${INSTALL} -m 0755 ${TARGETS} ${BINDIR}
-	${INSTALL} -m 0755 run_rogo.sh ${BINDIR}
+ifeq ($(target),Darwin)
+	${CODESIGN} -s - -f --entitlements ${DEBUG_ENTITLEMENTS} ${BINDIR}/rogomatic ${BINDIR}/player
+endif
 	${INSTALL} -d -m 1777 ${TMPDIR}
 	${INSTALL} -d -m 1777 ${RGMDIR}
 	${INSTALL} -d -m 0755 ${SHAREDIR}
@@ -756,7 +769,7 @@ install: all ${MISC_DOC} ${ORIG_DOC} stddocs
 	${INSTALL} -d -m 0755 ${MANDIR}
 	${INSTALL} -d -m 0755 ${MAN6DIR}
 	${INSTALL} -m 0444 rogomatic.6 ${MAN6DIR}
-	-@for i in ${OBSOLETE_TARGETS}; do \
+	-@for i in ${OBSOLETE_TARGETS} run_rogo.sh; do \
 	    if [[ -e ${BINDIR}/$$i ]]; then \
 		echo "removing obsolete: ${BINDIR}/$$i" ; \
 	        ${RM} -f -v "${BINDIR}/$$i" ; \
@@ -794,7 +807,7 @@ uninstall:
 	-@if [[ -d "${DESTDOC}" ]]; then \
 	    echo "You may wish to: rm -rf ${DESTDOC}"; \
 	fi
-	-@for i in ${OBSOLETE_TARGETS}; do \
+	-@for i in ${OBSOLETE_TARGETS} run_rogo.sh; do \
 	    if [[ -e ${BINDIR}/$$i ]]; then \
 		echo "removing obsolete: ${BINDIR}/$$i" ; \
 	        ${RM} -f -v "${BINDIR}/$$i" ; \

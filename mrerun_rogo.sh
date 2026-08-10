@@ -32,7 +32,7 @@
 
 # setup
 #
-export VERSION="1.0.0 2026-07-31"
+export VERSION="1.0.1 2026-08-10"
 NAME=$(basename "$0")
 export NAME
 #
@@ -103,6 +103,7 @@ export D_FLAG=
 export E_FLAG=
 export CAP_Z_FLAG=
 export QUIET_MODE=
+export CRASH_BASE_DIR=
 
 
 # NOTE: The following BASE_RGMDIR is NOT the default for rogomatic (/var/tmp/rogomatic)
@@ -282,6 +283,10 @@ function find_progs
     if [[ -n $QUIET_MODE ]]; then
 	RERUN_OPTION+=("-q")		# turn on quiet mode
     fi
+    if [[ -n $CRASH_BASE_DIR ]]; then
+	RERUN_OPTION+=("-C")		# set collect generated cores directory
+	RERUN_OPTION+=("$CRASH_BASE_DIR")
+    fi
 
     # found everything
     #
@@ -294,7 +299,7 @@ function find_progs
 export USAGE="usage: $0
         [-h] [-v level] [-V] [-n] [-N]
         [-o unstuck_player] [-O rerun_rogo] [-R run_rogo] [-s stopfile]
-        [-a secs] [-d] [-D base_rgmdir] [-e] [-f rogue] [-G goodlvl] [-H]
+        [-a secs] [-C ccoredir] [-d] [-D base_rgmdir] [-e] [-f rogue] [-G goodlvl] [-H]
         [-P player] [-q] [-r rogomatic] [-S seed] [-U usec] [-Z] ID
 
     -h          print help message and exit
@@ -309,6 +314,9 @@ export USAGE="usage: $0
     -s stopfile         stop the rerun cycle if stopfile exists (def: $BASE_RGMDIR/rogo.ID/.stopfile)
 
     -a secs             set the timeout timer to secs seconds (def: no timeout timer)
+    -C coredir          move code dumps under coredir, @ ==> use base_rgmdir/rogo.ID/coredump (def: don't save core dumps)
+                            NOTE: To improve the ability to debug core dumps using lldb(1), compile
+                                  rogomatic, and player using: make clobber clang
     -d                  use a UTC date and time sub-directory under rogomatic directory path (def: don't)
     -D base_rgmdir      base rogomatic directory under which a sub-directory rogo.id will be created (def: $BASE_RGMDIR)
                             NOTE: This implies: -s $BASE_RGMDIR/rogo.ID/.stopfile
@@ -319,6 +327,7 @@ export USAGE="usage: $0
 
     -P player           path to player (def: $PLAYER_TOOL)
     -q                  quiet mode: do not output rogue game play (def: do)
+                            NOTE: rerun_rogo stdout & stderr appended to rgmdir/rogo.ID/rerun_rogo.log
     -r rogomatic        path to rogomatic (def: $ROGOMATIC_TOOL)
     -S seed             set rogomatic seed (def: use a random seed)
     -U usec             set the sleep time between actions to usec microseconds (def: $USLEEP)
@@ -341,7 +350,7 @@ $NAME version: $VERSION"
 
 # parse command line
 #
-while getopts :hv:VnNo:O:R:s:a:dD:ef:G:HP:qr:S:U:Z flag; do
+while getopts :hv:VnNo:O:R:s:a:C:dD:ef:G:HP:qr:S:U:Z flag; do
   case "$flag" in
     h) echo "$USAGE"
 	exit 2
@@ -368,6 +377,8 @@ while getopts :hv:VnNo:O:R:s:a:dD:ef:G:HP:qr:S:U:Z flag; do
 
     a) SECS="$OPTARG"
 	;;
+    C) CRASH_BASE_DIR="$OPTARG"
+        ;;
     d) D_FLAG="-d"
         ;;
     D) BASE_RGMDIR="$OPTARG"
@@ -525,6 +536,7 @@ if [[ $V_FLAG -ge 3 ]]; then
     echo "$0: debug[3]: E_FLAG=$E_FLAG" 1>&2
     echo "$0: debug[3]: CAP_Z_FLAG=$CAP_Z_FLAG" 1>&2
     echo "$0: debug[3]: QUIET_MODE=$QUIET_MODE" 1>&2
+    echo "$0: debug[3]: CRASH_BASE_DIR=$CRASH_BASE_DIR" 1>&2
     echo "$0: debug[3]: ID=$ID" 1>&2
     echo "$0: debug[3]: RGMDIR=$RGMDIR" 1>&2
     for index in "${!RERUN_OPTION[@]}"; do
@@ -565,7 +577,7 @@ fi
 
 # report any SIGHUP received
 #
-trap 'tput reset; exit 129' HUP
+trap 'tput reset; reset; exit 129' HUP
 
 
 # run unstuck_player tool in the background
@@ -594,14 +606,34 @@ fi
 #
 if [[ -z $NOOP ]]; then
 
-    if [[ $V_FLAG -ge 1 ]]; then
-	echo "$0: debug[5]: about to execute: $RERUN_ROGO_TOOL ${RERUN_OPTION[*]}" 1>&2
-    fi
-    "$RERUN_ROGO_TOOL" "${RERUN_OPTION[@]}"
-    RERUN_EXIT="$?"
-    if [[ $RERUN_EXIT -ne 0 ]]; then
-	echo "$0: ERROR: $RERUN_ROGO_TOOL ${RERUN_OPTION[*]} failed," \
-	     "error code: $RERUN_EXIT" 1>&2
+    # case: -q quiet mode, append rerun_rogo output to $RGMDIR/rerun_rogo.log
+    #
+    if [[ -n $QUIET_MODE ]]; then
+
+	if [[ $V_FLAG -ge 1 ]]; then
+	    echo "$0: debug[5]: about to execute: $RERUN_ROGO_TOOL ${RERUN_OPTION[*]} >> $RGMDIR/rerun_rogo.log 2>&1" 1>&2
+	fi
+	"$RERUN_ROGO_TOOL" "${RERUN_OPTION[@]}" >> "$RGMDIR/rerun_rogo.log" 2>&1
+	RERUN_EXIT="$?"
+	if [[ $RERUN_EXIT -ne 0 ]]; then
+	    echo "$0: ERROR: $RERUN_ROGO_TOOL ${RERUN_OPTION[*]} >> $RGMDIR/rerun_rogo.log 2>&1 failed," \
+		 "error code: $RERUN_EXIT" 1>&2
+	fi
+
+    # case: normal (non quiet) mode
+    #
+    else
+
+	if [[ $V_FLAG -ge 1 ]]; then
+	    echo "$0: debug[5]: about to execute: $RERUN_ROGO_TOOL ${RERUN_OPTION[*]}" 1>&2
+	fi
+	"$RERUN_ROGO_TOOL" "${RERUN_OPTION[@]}"
+	RERUN_EXIT="$?"
+	if [[ $RERUN_EXIT -ne 0 ]]; then
+	    echo "$0: ERROR: $RERUN_ROGO_TOOL ${RERUN_OPTION[*]} failed," \
+		 "error code: $RERUN_EXIT" 1>&2
+	fi
+
     fi
 
     # cleanup trap
@@ -617,6 +649,8 @@ if [[ -z $NOOP ]]; then
 	kill -TERM "$WATCHER_PID" 2>/dev/null || true
     fi
     tput reset
+    reset
+
 elif [[ $V_FLAG -ge 3 ]]; then
     echo "$0: debug[3]: because of -n, execution of $RERUN_ROGO_TOOL ${RERUN_OPTION[*]} was disabled" 1>&2
 fi
