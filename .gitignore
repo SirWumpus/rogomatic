@@ -18,6 +18,7 @@ lex.yy.c
 Makefile.bak
 modern_curses.h
 mrerun_rogo
+mstop_rogo
 NOTES
 *.o
 player
