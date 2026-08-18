@@ -113,7 +113,7 @@ USLEEP= 14000
 #
 # NOTE: Historically PLUNGE_LVL was 18 and was a constant in an if statement:
 #
-# 	  if (Level > 17 && Level < 26 && godownstairs (NOTRUNNING)) {
+#	  if (Level > 17 && Level < 26 && godownstairs (NOTRUNNING)) {
 #
 #       By using a lower value, we start to plunge earlier.  We might nit
 #       obtain as much gold, but we increase the chance we survive to
@@ -497,15 +497,68 @@ form_rogomatic_cat_in: rogomatic.6.in
 clang-format: .clang-format ${C_SRC} ${H_SRC}
 	${CLANG_FORMAT} -i --style=file:.clang-format ${C_SRC} ${H_SRC}
 
-# compile all with gcc-16, full warnings, no optimizer, no ASAN
+# try to compile all with gcc, full warnings, no optimizer, no ASAN
 #
 # NOTE: Consider doing a "make clobber" first, especially when switching from a previous "make all", "make clang", etc.
 #
+# NOTE: On some systems with clang installed (i.e., macOS / Darwin), the clang package installs a gcc executable that
+#       acts like a front end translating gcc args into clang args.  In such cases, gcc is just clang,
+#       and so if we "make gcc" in that case, the final result is really just did "make clang": not what we want.
+#       If someone has called "make gcc", we presume that their intention is to use gcc, not clang.
+#       Where clang is primary, and gcc is just an arg front end to clang, it is possible to install gcc
+#       as a separate package.  On such true dual compiler systems, where gcc has been explicitly installed
+#       as a separate compiler, a gcc-digits binary is also installed; "digits" is the major version of gcc.
+#
+#       For macOS (Darwin) systems, if someone invokes "make gcc", we avoid the mistake of using the gcc
+#       front end to clang by mistake.  Thus, on macOS, for "make gcc" to work properly and compile with
+#       the gcc compiler, we will require that the system have explicitly installed gcc, and to invoke it
+#       in the gcc-digits binary form.  Nevertheless, we realize that this ties the "make gcc" rule for
+#       such systems to an explicit major version of gcc.  And there are GOOD REASONS to do this:
+#
+#               The sad state of the gcc debugger, gdb, is such that it has become, in our opinion,
+#               a second-rate debugger.  We won't go into much detail here other than to say that it
+#               is "not fun" to try to debug with gdb, a binary that uses ncurses (or curses) to control the
+#               terminal (e.g., rogue), and it is "not fun" to debug with gdb, a binary that will "fork/exec"
+#               something (e.g., rogomatic).
+#
+#               The gcc compiler release process is described by some as "mood swings", with significant
+#               and sometimes non-trivial changes to behaviour.  Therefore, we tie the "make gcc" make rule
+#               to an explicit major version of gcc, and ONLY update the "make gcc" rule when we have
+#               fully tested the result under the next major version of gcc.
+#
+#       Remember that the reason why we have "make gcc" (and "make clang") is to compile in such a way as to
+#       make debugging more effective.  If you do not intend to compile for debugging purposes, just use "make all"
+#       and explicitly set the compiler you want:
+#
+#               make all CC='/path/to/cc'
+#
+#       What should you do if you don't like the way "make gcc" operates?  We recommend just using "make all"
+#       with explicit make variable settings on the command line.  For example, say you are on a macOS (Darwin)
+#       system where "make gcc" calls gcc-16 and you want to instead call gcc-17, then try:
+#
+#               make all CC='gcc-17' CCWARN='-Wall -pedantic -Werror' COPT='-O0' DEBUG='-g2'
+#
+#       Or say you are on some other system where both clang and gcc are installed, and that the gcc executable
+#       isn't a clang front end (be SURE this is the case, and that due to the order you installed clang and gcc,
+#       or due to your $PATH value that gcc isn't just an arg converting front end for clang!).  Then try:
+#
+#               make all CC='/path/to/gcc' CCWARN='-Wall -pedantic -Werror' COPT='-O0' DEBUG='-g2'
+#
+#       So where does all these comments leave us?
+#
+#               The "make gcc" rule is intended for debugging, and we do NOT recommend debugging code with gdb.
+#               So these may not be the compiler droids you are looking for.  :-)
+#
+#               The Darwin target value of CC in "make gcc" below is the current major version of gcc that
+#               we have attempted to support.  You are on your own if you wish to use a different major version.
+#
+#               See the above comments for make line workarounds if you need them.
+#
 gcc:
-ifeq ($(target),Linux)
-	${MAKE} -f ${MAKE_FILE} all CC='gcc' CCWARN='-Wall -Wno-char-subscripts -pedantic -Werror' COPT='-O0' DEBUG='-ggdb3'
+ifeq ($(target),Darwin)
+	${MAKE} -f ${MAKE_FILE} all CC='gcc-16' CCWARN='-Wall -pedantic -Werror' COPT='-O0' DEBUG='-g2'
 else
-	${MAKE} -f ${MAKE_FILE} all CC='gcc-16' CCWARN='-Wall -Wno-char-subscripts -pedantic -Werror' COPT='-O0' DEBUG='-g2'
+	${MAKE} -f ${MAKE_FILE} all CC='gcc' CCWARN='-Wall -pedantic -Werror' COPT='-O0' DEBUG='-ggdb3'
 endif
 
 # compile all with clang, full warnings, no optimizer, no ASAN
